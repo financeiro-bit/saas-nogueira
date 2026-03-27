@@ -1376,6 +1376,7 @@ function saveCli(data){
     status:data?.s||document.getElementById('c-s').value,
   });
   if(!data){closeM('m-cli');document.getElementById('c-n').value='';toast('Cliente salvo com sucesso!');salvarTudo();}
+  else return; // bulk import: skip render during load
   renderClis();updateBadges();
 }
 function renderClis(){
@@ -2551,7 +2552,7 @@ async function carregarTudo(){
   }
 }
 
-window.onload=function(){
+window.onload=async function(){
   // Carregar plano de contas
   S.plano=JSON.parse(JSON.stringify(PLANO_COMPLETO));
 
@@ -2781,24 +2782,26 @@ window.onload=function(){
   {nome:'ELMER LABRA CASTRO',doc:'38313918000163',email:'elmerlabracastro6@gmail.com',tel:'',cidade:'São Paulo',estado:'SP',regime:'Simples Nacional',status:'Ativo'},
   {nome:'ALBERTO & MARTINS COMERCIO E SERVICOS EIRELI',doc:'36619350000188',email:'edson.falberto@hotmail.com',tel:'11981997472',cidade:'São Paulo',estado:'SP',regime:'Simples Nacional',status:'Ativo'}
 ];
-  CLIENTES_INICIAIS.forEach(c=>saveCli({n:c.nome,d:c.doc,r:c.regime,e:c.email,t:c.tel,ci:c.cidade,es:c.estado,s:c.status}));
-
   S.conciliacao=[];
+
+  // Conecta ao Supabase e tenta carregar dados da nuvem PRIMEIRO
+  initSupabase();
+  const carregou = await carregarTudo();
+
+  // Se não havia dados na nuvem, usa os clientes iniciais como fallback
+  if(!carregou || S.clientes.length === 0){
+    // Desativa o salvarTudo temporariamente para não sobrescrever dados da nuvem
+    const _sbClient = sbClient;
+    sbClient = null;
+    CLIENTES_INICIAIS.forEach(c=>saveCli({n:c.nome,d:c.doc,r:c.regime,e:c.email,t:c.tel,ci:c.cidade,es:c.estado,s:c.status}));
+    sbClient = _sbClient;
+    // Salva os clientes iniciais na nuvem pela primeira vez
+    dbSalvar('clientes', S.clientes);
+  }
+
   updateBadges();
   setTimeout(renderCharts,300);
-
-  // Conecta ao Supabase e carrega dados da nuvem
-  initSupabase();
-  carregarTudo().then(carregou => {
-    if(carregou){
-      // Atualiza a tela com dados da nuvem
-      renderClis();
-      renderForns();
-      updateBadges();
-      setTimeout(renderCharts, 300);
-      toast('Dados carregados da nuvem!');
-    }
-  });
+  if(carregou) toast('Dados carregados da nuvem!');
 };
 </script>
 </body>
