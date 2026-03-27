@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS Interno Nogueira</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f6fa;
+  --bg2:#ffffff;
+  --bg3:#f0f1f5;
+  --border:#e2e5ec;
+  --border2:#d0d4df;
+  --accent:#2563eb;
+  --accent-light:#eff6ff;
+  --accent2:#1d4ed8;
+  --green:#16a34a;
+  --green-bg:#f0fdf4;
+  --red:#dc2626;
+  --red-bg:#fef2f2;
+  --amber:#d97706;
+  --amber-bg:#fffbeb;
+  --purple:#7c3aed;
+  --purple-bg:#f5f3ff;
+  --text:#111827;
+  --text2:#6b7280;
+  --text3:#9ca3af;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -1px rgba(0,0,0,.04);
+  --radius:8px;
+  --sidebar:228px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden;font-size:14px}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow-y:auto}
+.logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;letter-spacing:-1px}
+.logo-text{font-weight:700;font-size:14px;color:var(--text);line-height:1.2}
+.logo-text span{display:block;font-weight:400;font-size:11px;color:var(--text2)}
+.nav-sec{padding:14px 14px 4px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .12s;margin:1px 6px;user-select:none}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.av-info{font-size:11px;color:var(--text2);line-height:1.3}
+.av-info strong{display:block;font-size:12px;color:var(--text);font-weight:600}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;gap:16px;flex-shrink:0}
+.topbar h1{font-weight:600;font-size:17px;color:var(--text)}
+.topbar p{font-size:12px;color:var(--text2)}
+.ta{margin-left:auto;display:flex;gap:8px;align-items:center}
+.content{flex:1;overflow-y:auto;padding:22px 24px}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'Inter',sans-serif;transition:all .12s;display:inline-flex;align-items:center;gap:6px}
+.bp{background:var(--accent);color:#fff;border-color:var(--accent)}.bp:hover{background:var(--accent2);border-color:var(--accent2)}
+.bs{background:#fff;color:var(--text2);border-color:var(--border)}.bs:hover{background:var(--bg3);color:var(--text)}
+.bd{background:var(--red-bg);color:var(--red);border-color:#fecaca}.bd:hover{background:#fee2e2}
+.bg2{background:var(--green-bg);color:var(--green);border-color:#bbf7d0}
+.bsm{padding:4px 10px;font-size:12px}
+
+/* CARDS */
+.mg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.mc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.mc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.mc-icon svg{width:18px;height:18px}
+.ml{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px}
+.mv{font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.ms{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* TABLE CARD */
+.tc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+.th{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff}
+.th h3{font-size:14px;font-weight:600;color:var(--text)}
+.sb{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;flex:1;max-width:280px}
+.sb input{background:none;border:none;outline:none;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;width:100%}
+.sb input::placeholder{color:var(--text3)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 18px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);background:var(--bg3)}
+td{padding:11px 18px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbfc}
+td strong{color:var(--text);font-weight:500}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bg-g{background:var(--green-bg);color:var(--green)}
+.bg-a{background:var(--amber-bg);color:var(--amber)}
+.bg-r{background:var(--red-bg);color:var(--red)}
+.bg-b{background:var(--accent-light);color:var(--accent)}
+.bg-gr{background:var(--bg3);color:var(--text2)}
+.bg-p{background:var(--purple-bg);color:var(--purple)}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px;background:var(--bg2);padding:0 4px}
+.tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab:hover:not(.active){color:var(--text)}
+
+/* IMPORT ZONE */
+.iz{border:2px dashed var(--border2);border-radius:var(--radius);padding:36px;text-align:center;cursor:pointer;transition:all .2s;background:#fff}
+.iz:hover{border-color:var(--accent);background:var(--accent-light)}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg label{font-size:12px;font-weight:500;color:var(--text2);display:block;margin-bottom:5px}
+.fg input,.fg select,.fg textarea{background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border .12s;width:100%}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.ff{grid-column:1/-1}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.mo.open{opacity:1;pointer-events:all}
+.md{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:580px;max-height:88vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s;box-shadow:var(--shadow-md)}
+.mo.open .md{transform:translateY(0)}
+.mdl{width:700px}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.mh h2{font-size:16px;font-weight:600;color:var(--text)}
+.mc2{background:var(--bg3);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:16px;transition:all .12s}.mc2:hover{background:var(--red-bg);color:var(--red)}
+
+/* SUMMARY CARDS */
+.sr{display:flex;gap:12px;margin-bottom:18px}
+.si{flex:1;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.sl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.sv{font-size:20px;font-weight:700;margin-top:3px;color:var(--text)}
+.sv.g{color:var(--green)}.sv.r{color:var(--red)}.sv.b{color:var(--accent)}.sv.am{color:var(--amber)}
+
+/* CHART CARD */
+.cc{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cc h3{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px}
+
+/* SEG CONTROL */
+.sg{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px;gap:2px}
+.sgb{flex:1;padding:6px 10px;border-radius:4px;border:none;background:none;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .12s}
+.sgb.active{background:#fff;color:var(--accent);font-weight:600;box-shadow:var(--shadow)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;color:var(--text);z-index:200;transform:translateY(20px);opacity:0;transition:all .3s;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:10px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* PAGE TOGGLE */
+.page{display:none}.page.active{display:block}
+.es{text-align:center;padding:48px 20px;color:var(--text3);font-size:13px}
+
+/* DIVIDER IN MODAL */
+.modal-section{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:14px}
+.modal-section-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+
+/* PLANO TREE */
+.tree-row{display:flex;align-items:center;padding:7px 16px;border-bottom:1px solid var(--border);transition:background .1s;cursor:default}
+.tree-row:hover{background:#fafbfc}
+.tree-row.group{background:var(--bg3);cursor:pointer}
+.tree-row.group:hover{background:#eceef3}
+.tree-toggle{width:18px;font-size:11px;color:var(--text3);flex-shrink:0;text-align:center}
+.tree-icon{font-size:14px;margin-right:6px;flex-shrink:0}
+.tree-code{font-family:monospace;font-size:11px;font-weight:600;flex-shrink:0;min-width:110px}
+.tree-name{flex:1;font-size:13px}
+.tree-name.is-group{font-weight:600;color:var(--text)}
+.tree-name.is-leaf{color:var(--text2)}
+.tree-type{font-size:11px;padding:1px 7px;border-radius:10px;min-width:68px;text-align:center;margin-right:6px}
+.tree-dc{font-size:12px;color:var(--text3);min-width:28px;text-align:center;margin-right:6px}
+.tree-grp{font-size:11px;color:var(--text3);min-width:48px;text-align:center;margin-right:8px}
+.tree-count{font-size:11px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:1px 7px;border-radius:10px;margin-right:8px;white-space:nowrap}
+.tree-actions{display:flex;gap:4px;flex-shrink:0}
+
+/* KANBAN */
+.kanban-col{flex:1;min-width:190px;max-width:230px}
+.kanban-header{border-radius:8px;padding:10px 12px;margin-bottom:10px}
+.kanban-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .15s}
+.kanban-card:hover{box-shadow:var(--shadow-md)}
+.kanban-card.alert{border-color:#fca5a5}
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">N</div>
+    <div class="logo-text">Nogueira<span>Escritório Contábil</span></div>
+  </div>
+  <div class="nav-sec">Principal</div>
+  <div class="nav-item active" onclick="go('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
+  <div class="nav-item" onclick="go('clientes',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Clientes <span class="nav-badge" id="bc">0</span></div>
+  <div class="nav-item" onclick="go('fornecedores',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Fornecedores <span class="nav-badge" id="bf">0</span></div>
+  <div class="nav-sec">Financeiro</div>
+  <div class="nav-item" onclick="go('lancamentos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Lançamentos</div>
+  <div class="nav-item" onclick="go('bancos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Bancos</div>
+  <div class="nav-item" onclick="go('conciliacao',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Conciliação Bancária</div>
+  <div class="nav-item" onclick="go('planoconta',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Plano de Contas</div>
+  <div class="nav-sec">Comercial</div>
+  <div class="nav-item" onclick="go('funil',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Funil de Vendas</div>
+  <div class="nav-item" onclick="go('relatorios',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>Relatórios</div>
+  <div class="nav-sec">Fiscal</div>
+  <div class="nav-item" onclick="go('radar',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Radar Fiscal</div>
+  <div class="nav-item" onclick="go('simulador',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Simulador Tributário</div>
+  <div class="sidebar-footer">
+    <div class="avatar">PN</div>
+    <div class="av-info"><strong>Paulo Nogueira</strong>Administrador</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div><h1 id="pt">Dashboard</h1><p id="ps">Visão geral do escritório</p></div>
+    <div class="ta" id="ta"></div>
+  </div>
+  <div class="content">
+<!-- ===== PAGES ===== -->
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="mg">
+    <div class="mc">
+      <div class="mc-icon" style="background:#eff6ff"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div class="ml">Clientes Ativos</div><div class="mv" id="d-cli">0</div><div class="ms">Cadastrados</div>
+    </div>
+    <div class="mc">
+      <div class="mc-icon" style="background:#f0fdf4"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <div class="ml">Entradas no Mês</div><div class="mv g" id="d-ent">R$ 0</div><div class="ms">Lançamentos recebidos</div>
+    </div>
+    <div class="mc">
+      <div class="mc-icon" style="background:#fffbeb"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="ml">A Receber</div><div class="mv am" id="d-rec">R$ 0</div><div class="ms">Em aberto</div>
+    </div>
+    <div class="mc">
+      <div class="mc-icon" style="background:#fef2f2"><svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <div class="ml">A Pagar</div><div class="mv r" id="d-pag">R$ 0</div><div class="ms">Pendente</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="cc"><h3>Fluxo de Caixa — Últimos 6 Meses</h3><div style="position:relative;height:200px"><canvas id="cF"></canvas></div></div>
+    <div class="cc"><h3>Clientes por Regime</h3><div style="position:relative;height:200px"><canvas id="cR"></canvas></div></div>
+  </div>
+  <div class="tc">
+    <div class="th"><h3>Últimos Lançamentos</h3></div>
+    <div id="d-lanc" style="padding:0 18px"><div class="es">Nenhum lançamento ainda.</div></div>
+  </div>
+</div>
+
+<!-- CLIENTES -->
+<div class="page" id="page-clientes">
+  <div class="tabs">
+    <div class="tab active" onclick="stab(this,'tcl')">Lista de Clientes</div>
+    <div class="tab" onclick="stab(this,'tci')">Importar Planilha</div>
+  </div>
+  <div id="tcl">
+    <div class="tc">
+      <div class="th">
+        <h3>Clientes Cadastrados</h3>
+        <div class="sb"><svg style="width:13px;height:13px;color:#9ca3af;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Buscar cliente..." oninput="ft('cli-tb',this.value)"></div>
+        <button class="btn bp bsm" onclick="openM('m-cli')">+ Novo Cliente</button>
+      </div>
+      <table><thead><tr><th>Nome / Razão Social</th><th>CNPJ / CPF</th><th>Regime</th><th>Email</th><th>Telefone</th><th>Cidade</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="cli-tb"></tbody></table>
+    </div>
+  </div>
+  <div id="tci" style="display:none">
+    <div class="iz" onclick="document.getElementById('fi-cli').click()" ondragover="dov(event,this)" ondragleave="dlv(this)" ondrop="ddf(event,'c')">
+      <svg style="width:40px;height:40px;color:#9ca3af;margin-bottom:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:4px">Arraste a planilha aqui</div>
+      <div style="font-size:13px;color:#9ca3af">Suporte: .xlsx, .xls, .csv — Clique para selecionar</div>
+    </div>
+    <input type="file" id="fi-cli" accept=".xlsx,.xls,.csv" onchange="hf(event,'c')" style="display:none">
+    <div style="margin-top:14px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px">
+      <p style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Colunas esperadas na planilha:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="badge bg-b">Nome</span><span class="badge bg-b">CNPJ/CPF</span><span class="badge bg-b">Regime</span><span class="badge bg-b">Email</span><span class="badge bg-b">Celular</span><span class="badge bg-b">Cidade</span><span class="badge bg-b">Status</span>
+      </div>
+    </div>
+    <div id="pv-cli" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- FORNECEDORES -->
+<div class="page" id="page-fornecedores">
+  <div class="tabs">
+    <div class="tab active" onclick="stab(this,'tfl')">Lista de Fornecedores</div>
+    <div class="tab" onclick="stab(this,'tfi')">Importar Planilha</div>
+  </div>
+  <div id="tfl">
+    <div class="tc">
+      <div class="th">
+        <h3>Fornecedores Cadastrados</h3>
+        <div class="sb"><svg style="width:13px;height:13px;color:#9ca3af;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Buscar fornecedor..." oninput="ft('forn-tb',this.value)"></div>
+        <button class="btn bp bsm" onclick="openM('m-forn')">+ Novo Fornecedor</button>
+      </div>
+      <table><thead><tr><th>Nome</th><th>CNPJ</th><th>Categoria</th><th>Email</th><th>Telefone</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="forn-tb"></tbody></table>
+    </div>
+  </div>
+  <div id="tfi" style="display:none">
+    <div class="iz" onclick="document.getElementById('fi-forn').click()" ondragover="dov(event,this)" ondragleave="dlv(this)" ondrop="ddf(event,'f')">
+      <svg style="width:40px;height:40px;color:#9ca3af;margin-bottom:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:4px">Arraste a planilha aqui</div>
+      <div style="font-size:13px;color:#9ca3af">.xlsx, .xls, .csv</div>
+    </div>
+    <input type="file" id="fi-forn" accept=".xlsx,.xls,.csv" onchange="hf(event,'f')" style="display:none">
+    <div id="pv-forn" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- LANÇAMENTOS -->
+<div class="page" id="page-lancamentos">
+  <div class="sr">
+    <div class="si"><div class="sl">Saldo</div><div class="sv b" id="l-saldo">R$ 0,00</div></div>
+    <div class="si"><div class="sl">Entradas</div><div class="sv g" id="l-ent">R$ 0,00</div></div>
+    <div class="si"><div class="sl">Saídas</div><div class="sv r" id="l-sai">R$ 0,00</div></div>
+    <div class="si"><div class="sl">Transferências</div><div class="sv am" id="l-tra">R$ 0,00</div></div>
+  </div>
+  <div class="sg" id="seg-l" style="margin-bottom:16px;width:fit-content">
+    <button class="sgb active" onclick="setSegL('todos',this)">Todos</button>
+    <button class="sgb" onclick="setSegL('receber',this)">A Receber</button>
+    <button class="sgb" onclick="setSegL('pagar',this)">A Pagar</button>
+    <button class="sgb" onclick="setSegL('transferencia',this)">Transferências</button>
+  </div>
+  <div class="tc">
+    <div class="th"><h3>Lançamentos</h3></div>
+    <table><thead><tr><th>Tipo</th><th>Vencimento</th><th>Histórico</th><th>Conta</th><th>Banco</th><th>Doc</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+    <tbody id="l-tb"></tbody></table>
+  </div>
+</div>
+
+<!-- BANCOS -->
+<div class="page" id="page-bancos">
+  <div class="tc">
+    <div class="th"><h3>Bancos Cadastrados</h3><button class="btn bp bsm" onclick="openM('m-banco')">+ Novo Banco</button></div>
+    <table><thead><tr><th>Código</th><th>Descrição</th><th>Agência</th><th>Conta</th><th>Saldo Inicial</th><th>Data Saldo</th><th>Ações</th></tr></thead>
+    <tbody id="banco-tb"></tbody></table>
+  </div>
+</div>
+
+<!-- CONCILIAÇÃO -->
+<div class="page" id="page-conciliacao">
+  <div class="sr">
+    <div class="si"><div class="sl">Saldo Extrato</div><div class="sv b" id="ce">R$ 0,00</div></div>
+    <div class="si"><div class="sl">Transações Importadas</div><div class="sv" id="cc2" style="color:var(--text)">0</div></div>
+    <div class="si"><div class="sl">Conciliadas</div><div class="sv g" id="cc3">0</div></div>
+    <div class="si"><div class="sl">Pendentes</div><div class="sv am" id="cc4">0</div></div>
+  </div>
+  <div class="tc">
+    <div class="th">
+      <h3>Importar Extrato OFX</h3>
+      <button class="btn bs bsm" onclick="document.getElementById('fi-ofx').click()">📁 Selecionar arquivo OFX</button>
+      <input type="file" id="fi-ofx" accept=".ofx,.OFX" onchange="hOFX(event)" style="display:none">
+      <select id="cb-sel" style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;color:var(--text);outline:none"><option value="">Selecione o banco</option></select>
+    </div>
+    <table><thead><tr><th>Data</th><th>Histórico (Extrato)</th><th>Valor</th><th>Lançamento Vinculado</th><th>Status</th><th>Ação</th></tr></thead>
+    <tbody id="conc-tb"><tr><td colspan="6"><div class="es">Importe um arquivo OFX para iniciar a conciliação.</div></td></tr></tbody></table>
+  </div>
+</div>
+
+<!-- PLANO DE CONTAS -->
+<div class="page" id="page-planoconta"></div>
+
+<!-- FUNIL DE VENDAS -->
+<div class="page" id="page-funil"></div>
+
+<!-- OUTROS -->
+<div class="page" id="page-relatorios"><div class="es" style="padding:80px"><svg style="width:48px;height:48px;color:#d1d5db;margin:0 auto 16px;display:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg><p style="font-size:15px;color:#6b7280">Relatórios — Em desenvolvimento</p></div></div>
+<div class="page" id="page-radar"><div class="es" style="padding:80px"><p style="font-size:15px;color:#6b7280">Radar Fiscal — Em desenvolvimento</p></div></div>
+<div class="page" id="page-simulador"><div class="es" style="padding:80px"><p style="font-size:15px;color:#6b7280">Simulador Tributário — Em desenvolvimento</p></div></div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+<!-- ===== MODAIS ===== -->
+<div class="mo" id="m-cli"><div class="md mdl">
+  <div class="mh"><h2>Cadastro de Cliente</h2><div class="mc2" onclick="closeM('m-cli')">×</div></div>
+  <div class="fg">
+    <div class="ff"><label>Nome / Razão Social *</label><input id="c-n" type="text" placeholder="Razão social ou nome completo"></div>
+    <div><label>CNPJ / CPF</label><input id="c-d" type="text" placeholder="00.000.000/0001-00"></div>
+    <div><label>Regime Tributário</label><select id="c-r"><option>Simples Nacional</option><option>Lucro Presumido</option><option>Lucro Real</option><option>MEI</option><option>Pessoa Física</option></select></div>
+    <div><label>Email</label><input id="c-e" type="email" placeholder="email@empresa.com"></div>
+    <div><label>Celular</label><input id="c-t" type="text" placeholder="(11) 99999-9999"></div>
+    <div><label>Cidade</label><input id="c-ci" type="text"></div>
+    <div><label>Estado</label><input id="c-es" type="text" placeholder="SP" style="max-width:80px"></div>
+    <div><label>Status</label><select id="c-s"><option>Ativo</option><option>Inativo</option><option>Suspenso</option></select></div>
+    <div class="ff"><label>Observações</label><input id="c-ob" type="text" placeholder="Anotações adicionais"></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-cli')">Cancelar</button>
+    <button class="btn bp" onclick="saveCli()">Salvar Cliente</button>
+  </div>
+</div></div>
+
+<div class="mo" id="m-forn"><div class="md">
+  <div class="mh"><h2>Cadastro de Fornecedor</h2><div class="mc2" onclick="closeM('m-forn')">×</div></div>
+  <div class="fg">
+    <div class="ff"><label>Nome / Razão Social *</label><input id="f-n" type="text" placeholder="Razão social"></div>
+    <div><label>CNPJ</label><input id="f-d" type="text" placeholder="00.000.000/0001-00"></div>
+    <div><label>Categoria</label><select id="f-c"><option>Tecnologia</option><option>Escritório</option><option>Contabilidade</option><option>Serviços</option><option>Outros</option></select></div>
+    <div><label>Email</label><input id="f-e" type="email"></div>
+    <div><label>Telefone</label><input id="f-t" type="text"></div>
+    <div><label>Status</label><select id="f-s"><option>Ativo</option><option>Inativo</option></select></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-forn')">Cancelar</button>
+    <button class="btn bp" onclick="saveForn()">Salvar Fornecedor</button>
+  </div>
+</div></div>
+
+<div class="mo" id="m-lanc"><div class="md mdl">
+  <div class="mh"><h2>Novo Lançamento</h2><div class="mc2" onclick="closeM('m-lanc')">×</div></div>
+  <div class="sg" id="sg-lt" style="margin-bottom:16px">
+    <button class="sgb active" onclick="setLT('receber',this)">↑ A Receber</button>
+    <button class="sgb" onclick="setLT('pagar',this)">↓ A Pagar</button>
+    <button class="sgb" onclick="setLT('transferencia',this)">⇄ Transferência entre Bancos</button>
+  </div>
+  <div id="fm-tr" style="display:none">
+    <div class="fg">
+      <div><label>Banco Origem</label><select id="l-bo"></select></div>
+      <div><label>Banco Destino</label><select id="l-bd"></select></div>
+      <div><label>Data</label><input id="l-td" type="date"></div>
+      <div><label>Valor (R$)</label><input id="l-tv" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="ff"><label>Histórico</label><input id="l-th" type="text" placeholder="Descrição da transferência"></div>
+    </div>
+  </div>
+  <div id="fm-lc">
+    <div class="fg">
+      <div><label>Data Emissão</label><input id="l-em" type="date"></div>
+      <div><label>Data Vencimento *</label><input id="l-vc" type="date"></div>
+      <div><label>Valor (R$) *</label><input id="l-vl" type="number" step="0.01" placeholder="0,00"></div>
+      <div><label>Despesa / Receita</label><select id="l-ct"><option value="">Selecione a conta</option></select></div>
+      <div><label>Centro de Custo</label><input id="l-cc" type="text"></div>
+      <div><label>Documento</label><input id="l-dc" type="text"></div>
+      <div class="ff"><label>Histórico *</label><input id="l-ht" type="text" placeholder="Descrição do lançamento"></div>
+      <div><label>Cliente / Fornecedor</label><input id="l-en" type="text"></div>
+      <div><label>Status</label><select id="l-st"><option value="aberto">Em Aberto</option><option value="baixado">Baixado</option><option value="atraso">Em Atraso</option></select></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Baixa</div>
+      <div class="fg">
+        <div><label>Banco</label><select id="l-bk"></select></div>
+        <div><label>Data da Baixa</label><input id="l-bd2" type="date"></div>
+        <div><label>Valor da Baixa</label><input id="l-bv" type="number" step="0.01" placeholder="0,00"></div>
+        <div><label>Juros</label><input id="l-jr" type="number" step="0.01" placeholder="0,00"></div>
+        <div><label>Desconto</label><input id="l-ds" type="number" step="0.01" placeholder="0,00"></div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-lanc')">Cancelar</button>
+    <button class="btn bp" onclick="saveLanc()">Salvar Lançamento</button>
+  </div>
+</div></div>
+
+<div class="mo" id="m-banco"><div class="md">
+  <div class="mh"><h2>Cadastro de Banco</h2><div class="mc2" onclick="closeM('m-banco')">×</div></div>
+  <div class="fg">
+    <div><label>Código</label><input id="bk-c" type="text" placeholder="01"></div>
+    <div><label>Descrição *</label><input id="bk-d" type="text" placeholder="Nome do banco"></div>
+    <div><label>Agência</label><input id="bk-a" type="text" placeholder="0000"></div>
+    <div><label>Conta</label><input id="bk-ct" type="text" placeholder="00000-0"></div>
+    <div><label>Data Saldo Inicial</label><input id="bk-ds" type="date"></div>
+    <div><label>Saldo Inicial (R$)</label><input id="bk-s" type="number" step="0.01" placeholder="0,00"></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-banco')">Cancelar</button>
+    <button class="btn bp" onclick="saveBanco()">Salvar Banco</button>
+  </div>
+</div></div>
+
+<div class="mo" id="m-plan"><div class="md">
+  <div class="mh"><h2 id="m-plan-t">Nova Conta Contábil</h2><div class="mc2" onclick="closeM('m-plan')">×</div></div>
+  <div class="fg">
+    <div><label>Código da Conta</label><input id="p-id" type="text" placeholder="Ex: 1.1.2.04.001"></div>
+    <div><label>Tipo (S/A)</label><select id="p-sa"><option value="S">S — Sintética (grupo)</option><option value="A">A — Analítica (lançamento)</option></select></div>
+    <div class="ff"><label>Descrição / Histórico *</label><input id="p-ht" type="text" placeholder="Nome da conta contábil"></div>
+    <div><label>D / C</label><select id="p-dc"><option value="D">D — Débito</option><option value="C">C — Crédito</option></select></div>
+    <div><label>Tipo de Saldo</label><select id="p-ts"><option value="DC">DC</option><option value="D">D</option><option value="C">C</option></select></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-plan')">Cancelar</button>
+    <button class="btn bp" onclick="savePlan()">Salvar Conta</button>
+  </div>
+</div></div>
+
+<!-- Modais Funil -->
+<div class="mo" id="m-lead"><div class="md">
+  <div class="mh"><h2>Novo Lead</h2><div class="mc2" onclick="closeM('m-lead')">×</div></div>
+  <div class="fg">
+    <div class="ff"><label>Nome do Lead *</label><input id="ml-n" type="text" placeholder="Nome do lead"></div>
+    <div class="ff"><label>Cliente / Empresa</label><input id="ml-c" type="text" placeholder="Razão social"></div>
+    <div><label>Valor Estimado (R$)</label><input id="ml-v" type="number" step="0.01" placeholder="0,00"></div>
+    <div><label>Tipo</label><select id="ml-t"><option>Recorrente</option><option>Único</option></select></div>
+    <div class="ff"><label>Descrição / Serviço</label><input id="ml-d" type="text" placeholder="Serviço a ser prestado"></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-lead')">Cancelar</button>
+    <button class="btn bp" onclick="saveLead()">Salvar Lead</button>
+  </div>
+</div></div>
+
+<div class="mo" id="m-orc"><div class="md">
+  <div class="mh"><h2>Novo Orçamento</h2><div class="mc2" onclick="closeM('m-orc')">×</div></div>
+  <div class="fg">
+    <div class="ff"><label>Título do Orçamento *</label><input id="mo-t" type="text" placeholder="Descrição do serviço orçado"></div>
+    <div><label>Valor (R$)</label><input id="mo-v" type="number" step="0.01" placeholder="0,00"></div>
+    <div><label>Forma de Pagamento</label><select id="mo-p"><option>Boleto</option><option>PIX</option><option>Cartão</option><option>Transferência</option></select></div>
+    <div><label>Válido até</label><input id="mo-vl" type="date"></div>
+    <div class="ff"><label>Vendedor</label><input id="mo-vd" type="text" placeholder="Nome do vendedor responsável"></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-orc')">Cancelar</button>
+    <button class="btn bp" onclick="saveOrc()">Salvar Orçamento</button>
+  </div>
+</div></div>
+
+<div class="mo" id="m-contrato"><div class="md mdl">
+  <div class="mh"><h2>Novo Contrato</h2><div class="mc2" onclick="closeM('m-contrato')">×</div></div>
+  <div class="fg">
+    <div class="ff"><label>Cliente *</label><input id="mc-c" type="text" placeholder="Nome ou razão social do cliente"></div>
+    <div class="ff"><label>Objeto do Contrato</label><input id="mc-s" type="text" placeholder="Ex: Prestação de Serviços Contábeis"></div>
+    <div><label>Responsável / Lead</label><input id="mc-l" type="text"></div>
+    <div><label>Tipo</label><select id="mc-tp"><option>Mensal</option><option>Anual</option><option>Trimestral</option><option>Único</option></select></div>
+    <div><label>Valor (R$)</label><input id="mc-v" type="number" step="0.01" placeholder="0,00"></div>
+    <div><label>Dia de Vencimento</label><input id="mc-d" type="number" min="1" max="31" placeholder="10"></div>
+    <div><label>Data de Início</label><input id="mc-i" type="date"></div>
+    <div><label>Status</label><select id="mc-st"><option>Ativo</option><option>Inativo</option><option>Pendente</option></select></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-contrato')">Cancelar</button>
+    <button class="btn bp" onclick="saveContrato()">Salvar Contrato</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"><div class="toast-dot" id="t-dot"></div><span id="t-msg">Salvo com sucesso!</span></div>
+<script>
+const PLANO_COMPLETO = [
+  {id:'1.0.0.00.000',sa:'S',hist:'ATIVO',dc:'D',ts:'DC'},
+  {id:'1.1.0.00.000',sa:'S',hist:'ATIVO CIRCULANTE',dc:'D',ts:'DC'},
+  {id:'1.1.2.00.000',sa:'S',hist:'CAIXA E EQUIVALENTES DE CAIXA',dc:'D',ts:'DC'},
+  {id:'1.1.2.02.000',sa:'S',hist:'NUMERÁRIOS',dc:'D',ts:'DC'},
+  {id:'1.1.2.02.001',sa:'A',hist:'Caixa geral',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.000',sa:'S',hist:'BANCOS CONTA MOVIMENTO',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.001',sa:'A',hist:'Banco Bradesco',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.002',sa:'A',hist:'Banco Bradesco - 2',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.024',sa:'A',hist:'Banco Conta Digital Bling (Leka)',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.023',sa:'A',hist:'Banco Cora',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.007',sa:'A',hist:'Banco do Brasil',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.008',sa:'A',hist:'Banco do Brasil - 2',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.003',sa:'A',hist:'Banco HSBC',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.004',sa:'A',hist:'Banco HSBC - 2',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.009',sa:'A',hist:'Banco Itaú',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.010',sa:'A',hist:'Banco Itaú - 2',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.017',sa:'A',hist:'Banco Mercado Pago',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.013',sa:'A',hist:'Banco Mercantil do Brasil',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.005',sa:'A',hist:'Banco Santander',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.020',sa:'A',hist:'BB c/Mov Ag 3553-X C/C 20948-1 Doações',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.021',sa:'A',hist:'Bco Itaú c/Mov Ag 1269 CC 99666-4 PADRINHOS',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.019',sa:'A',hist:'Bco Itaú c/Mov Ag 1269 CC 997159 PROJETO ESCOLA',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.022',sa:'A',hist:'Bco Itaú c/Mov Ag 1269 CC 99721-7 BEZALEL',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.018',sa:'A',hist:'Bco Itaú c/Mov Ag 1269 CC 99856-1 TEATRO',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.011',sa:'A',hist:'Caixa Econômica Federal',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.012',sa:'A',hist:'Caixa Econômica Federal - 2',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.015',sa:'A',hist:'PagBank',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.006',sa:'A',hist:'SICOOB - Banco Cooperativo do Brasil S.A',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.014',sa:'A',hist:'SICOOB - Banco Cooperativo do Brasil S.A (Poupança)',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.016',sa:'A',hist:'Stone Instituição de Pagamento',dc:'D',ts:'DC'},
+  {id:'1.1.2.04.025',sa:'A',hist:'TRANSFERENCIAS ENTRE CONTAS',dc:'D',ts:'DC'},
+  {id:'1.1.2.05.000',sa:'S',hist:'(-) DUPLICATAS DESCONTADAS',dc:'C',ts:'DC'},
+  {id:'1.1.2.05.001',sa:'A',hist:'(-)Real Minas Factoring',dc:'C',ts:'DC'},
+  {id:'1.1.2.06.000',sa:'S',hist:'APLICAÇÕES FINANCEIRAS',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.017',sa:'A',hist:'Aplicação Financeira Itaú CREDBANCO',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.018',sa:'A',hist:'Aplicação Financeira Itaú ITAUEMPRF',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.016',sa:'A',hist:'Aplicação Financeira Fundo Itaú Privilege - Banco Itáu',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.015',sa:'A',hist:'Bco Itaú c/Invest Ag 1269 C/C 99666-4 PADRINHOS',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.001',sa:'A',hist:'Aplicação Financeira - Banco Bradesco',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.002',sa:'A',hist:'Aplicação Financeira - Banco do Brasil',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.003',sa:'A',hist:'Aplicação Financeira - Banco HSBC',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.004',sa:'A',hist:'Aplicação Financeira - Banco Itáu',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.005',sa:'A',hist:'Aplicação Financeira - Banco Santander',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.006',sa:'A',hist:'Aplicação Financeira - Caixa Econômica Federal',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.007',sa:'A',hist:'Aplicação Financeira - Sicoob Ascicred',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.009',sa:'A',hist:'Aplicação financeira PagBank',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.008',sa:'A',hist:'Banco Nu. Pagamentos',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.010',sa:'A',hist:'BB c/Invest Ag 3553-X C/C 20948-1',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.014',sa:'A',hist:'Bco Itaú c/Invest Ag 0716 C/C 61192-6 Palco Del Arte',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.012',sa:'A',hist:'Bco Itaú c/Invest Ag 1269 C/C 99715-9 Projeto Escola',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.013',sa:'A',hist:'Bco Itaú c/Invest Ag 1269 C/C 99721-7 BEZALEL',dc:'D',ts:'DC'},
+  {id:'1.1.2.06.011',sa:'A',hist:'Bco Itaú c/Invest Ag 1269 CC 99856-1 TEATRO',dc:'D',ts:'DC'},
+  {id:'1.1.2.08.000',sa:'S',hist:'VALORES MOBILIÁRIOS',dc:'D',ts:'DC'},
+  {id:'1.1.2.08.001',sa:'A',hist:'Aplicações Internacionais',dc:'D',ts:'DC'},
+  {id:'1.1.2.08.002',sa:'A',hist:'Aplicações Nacionais',dc:'D',ts:'DC'},
+  {id:'1.1.4.00.000',sa:'S',hist:'CRÉDITOS A CURTO PRAZO',dc:'D',ts:'DC'},
+  {id:'1.1.4.02.000',sa:'S',hist:'ADIANTAMENTO A FORNECEDORES',dc:'D',ts:'DC'},
+  {id:'1.1.4.02.001',sa:'A',hist:'Adiantamentos a fornecedores',dc:'D',ts:'DC'},
+  {id:'1.1.4.02.002',sa:'A',hist:'Nivaldo Teodoro dos Anjos',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.000',sa:'S',hist:'CRÉDITO DE IMPOSTOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.007',sa:'A',hist:'COFINS a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.005',sa:'A',hist:'CSLL a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.001',sa:'A',hist:'ICMS a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.009',sa:'A',hist:'ICMS CIAP',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.004',sa:'A',hist:'INSS a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.002',sa:'A',hist:'IPI a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.010',sa:'A',hist:'IRPJ a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.008',sa:'A',hist:'IRRF a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.003',sa:'A',hist:'ISSQN a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.04.006',sa:'A',hist:'PIS a recuperar',dc:'D',ts:'DC'},
+  {id:'1.1.4.06.000',sa:'S',hist:'LÍQUIDO DE EMPRÉSTIMOS CONCEDIDOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.06.003',sa:'A',hist:'(-) Encargos sobre empréstimos a apropriar (curto prazo)',dc:'C',ts:'DC'},
+  {id:'1.1.4.06.004',sa:'A',hist:'EMPRÉSTIMO DE SÓCIO',dc:'D',ts:'DC'},
+  {id:'1.1.4.06.001',sa:'A',hist:'Empréstimos para terceiros (curto prazo)',dc:'D',ts:'DC'},
+  {id:'1.1.4.06.002',sa:'A',hist:'Empréstimos para terceiros (curto prazo) - cta. integrada',dc:'D',ts:'DC'},
+  {id:'1.1.4.08.000',sa:'S',hist:'LÍQUIDO DE FINANCIAMENTOS CONCEDIDOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.08.003',sa:'A',hist:'(-) Encargos sobre financiamentos a apropriar (curto prazo)',dc:'C',ts:'DC'},
+  {id:'1.1.4.08.002',sa:'A',hist:'Financiamento para terceiros (curto prazo) - cta. integrada',dc:'D',ts:'DC'},
+  {id:'1.1.4.08.001',sa:'A',hist:'Financiamentos para terceiros (curto prazo)',dc:'D',ts:'DC'},
+  {id:'1.1.4.10.000',sa:'S',hist:'ADIANTAMENTO A EMPREGADOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.10.004',sa:'A',hist:'ADIANTAMENTO FÉRIAS',dc:'D',ts:'DC'},
+  {id:'1.1.4.10.005',sa:'A',hist:'ADIANTAMENTO SALARIAL',dc:'D',ts:'DC'},
+  {id:'1.1.4.10.006',sa:'A',hist:'Adiantamentos a Empregado',dc:'D',ts:'DC'},
+  {id:'1.1.4.10.003',sa:'A',hist:'Adiantamentos de 13º salário',dc:'D',ts:'DC'},
+  {id:'1.1.4.10.001',sa:'A',hist:'Adiantamentos de salários',dc:'D',ts:'DC'},
+  {id:'1.1.4.10.002',sa:'A',hist:'Arredondamentos da folha',dc:'D',ts:'DC'},
+  {id:'1.1.4.12.000',sa:'S',hist:'ADIANTAMENTOS A SÓCIOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.12.001',sa:'A',hist:'Distribuição antecipada de lucros',dc:'D',ts:'DC'},
+  {id:'1.1.4.14.000',sa:'S',hist:'DEPÓSITOS BLOQUEADOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.14.001',sa:'A',hist:'Depósito bloqueado',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.000',sa:'S',hist:'TITULOS DE CAPITALIZAÇÃO',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.003',sa:'A',hist:'Banco Bradesco (Capitalização)',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.004',sa:'A',hist:'Banco Caixa Econômica Federal (Capitalização)',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.007',sa:'A',hist:'Banco Cora (Capitalização)',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.005',sa:'A',hist:'Banco do Brasil (Capitalização)',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.001',sa:'A',hist:'Banco HSBC (Capitalização)',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.006',sa:'A',hist:'Banco Itaú (Capitalização)',dc:'D',ts:'DC'},
+  {id:'1.1.4.16.002',sa:'A',hist:'Banco Santander (Capitalização)',dc:'D',ts:'DC'},
+  {id:'1.1.4.18.000',sa:'S',hist:'CRÉDITOS A RECEBER',dc:'D',ts:'DC'},
+  {id:'1.1.4.18.002',sa:'A',hist:'Cartão de crédito a pagar',dc:'D',ts:'DC'},
+  {id:'1.1.4.18.001',sa:'A',hist:'Cartão de débito',dc:'D',ts:'DC'},
+  {id:'1.1.4.18.003',sa:'A',hist:'Cliente a receber - Launch Pad',dc:'D',ts:'DC'},
+  {id:'1.1.4.20.000',sa:'S',hist:'OUTROS CRÉDITOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.20.003',sa:'A',hist:'Aluguéis a receber',dc:'D',ts:'DC'},
+  {id:'1.1.4.20.002',sa:'A',hist:'Contas a receber',dc:'D',ts:'DC'},
+  {id:'1.1.4.22.000',sa:'S',hist:'CONTROLE DE CLIENTES',dc:'D',ts:'DC'},
+  {id:'1.1.4.22.001',sa:'A',hist:'Clientes a receber - cta. integrada',dc:'D',ts:'DC'},
+  {id:'1.1.4.24.000',sa:'S',hist:'CLIENTES DIVERSOS',dc:'D',ts:'DC'},
+  {id:'1.1.4.24.002',sa:'A',hist:'Clientes diversos',dc:'D',ts:'DC'},
+  {id:'1.1.4.24.001',sa:'A',hist:'Saldo balanço de abertura',dc:'D',ts:'DC'},
+  {id:'1.1.4.26.000',sa:'S',hist:'CHEQUES EM TRÂNSITO',dc:'D',ts:'DC'},
+  {id:'1.1.4.26.002',sa:'A',hist:'Cheques a receber',dc:'D',ts:'DC'},
+  {id:'1.1.4.26.001',sa:'A',hist:'Cheques devolvidos',dc:'D',ts:'DC'},
+  {id:'1.1.6.00.000',sa:'S',hist:'ENTRADAS',dc:'D',ts:'DC'},
+  {id:'1.1.6.02.000',sa:'S',hist:'ESTOQUES DE MERCADORIAS',dc:'D',ts:'DC'},
+  {id:'1.1.6.02.001',sa:'A',hist:'Mercadorias para revenda',dc:'D',ts:'DC'},
+  {id:'1.1.6.04.000',sa:'S',hist:'ESTOQUES DE INSUMOS NA PRESTAÇÃO DE SERVIÇOS',dc:'D',ts:'DC'},
+  {id:'1.1.6.04.002',sa:'A',hist:'Material de uso e consumo',dc:'D',ts:'DC'},
+  {id:'1.1.6.04.001',sa:'A',hist:'Mercadorias para uso na prestação de serviços',dc:'D',ts:'DC'},
+  {id:'1.1.6.06.000',sa:'S',hist:'ESTOQUES DE PRODUTOS/MATÉRIAS-PRIMAS',dc:'D',ts:'DC'},
+  {id:'1.1.6.06.001',sa:'A',hist:'Matérias primas',dc:'D',ts:'DC'},
+  {id:'1.1.6.06.003',sa:'A',hist:'Produtos acabados',dc:'D',ts:'DC'},
+  {id:'1.1.6.08.000',sa:'S',hist:'ENTRADAS COM RECEBIMENTO FUTURO',dc:'D',ts:'DC'},
+  {id:'1.1.6.08.001',sa:'A',hist:'Entrada com recebimento futuro',dc:'D',ts:'DC'},
+  {id:'1.1.8.00.000',sa:'S',hist:'DESPESAS DO EXERCÍCIO SEGUINTE',dc:'D',ts:'DC'},
+  {id:'1.1.8.02.000',sa:'S',hist:'SEGUROS A APROPRIAR',dc:'D',ts:'DC'},
+  {id:'1.1.8.02.005',sa:'A',hist:'Banco C6 S.A',dc:'D',ts:'DC'},
+  {id:'1.1.8.02.004',sa:'A',hist:'Prêmios de Seguros a Apropriar',dc:'D',ts:'DC'},
+  {id:'1.1.8.02.003',sa:'A',hist:'PrevCaixa',dc:'D',ts:'DC'},
+  {id:'1.1.8.02.001',sa:'A',hist:'Seguros de veículos',dc:'D',ts:'DC'},
+  {id:'1.1.8.02.002',sa:'A',hist:'Seguros prédios, bens e estoques',dc:'D',ts:'DC'},
+  {id:'1.1.8.04.000',sa:'S',hist:'ASSINATURAS A APROPRIAR',dc:'D',ts:'DC'},
+  {id:'1.1.8.04.001',sa:'A',hist:'Assinaturas de jornais, boletins e revistas',dc:'D',ts:'DC'},
+  {id:'1.2.0.00.000',sa:'S',hist:'ATIVO NÃO CIRCULANTE',dc:'D',ts:'DC'},
+  {id:'1.2.2.00.000',sa:'S',hist:'REALIZÁVEL A LONGO PRAZO',dc:'D',ts:'DC'},
+  {id:'1.2.2.01.000',sa:'S',hist:'REALIZÁVEL A LONGO PRAZO',dc:'D',ts:'DC'},
+  {id:'1.2.2.01.001',sa:'A',hist:'DIREITOS CREDITORIOS A RECEBER',dc:'D',ts:'DC'},
+  {id:'1.2.2.02.000',sa:'S',hist:'DEPÓSITOS PARA RECURSO JUDICIAL',dc:'D',ts:'DC'},
+  {id:'1.2.2.02.001',sa:'A',hist:'COFINS - depósito judicial',dc:'D',ts:'DC'},
+  {id:'1.2.2.02.002',sa:'A',hist:'INSS - depósito judicial',dc:'D',ts:'DC'},
+  {id:'1.2.2.02.003',sa:'A',hist:'PIS - depósito judicial',dc:'D',ts:'DC'},
+  {id:'1.2.2.04.000',sa:'S',hist:'LÍQUIDO DE EMPRÉSTIMOS CONCEDIDOS (LP)',dc:'D',ts:'DC'},
+  {id:'1.2.2.04.003',sa:'A',hist:'(-) Encargos sobre empréstimos a apropriar (longo prazo)',dc:'C',ts:'DC'},
+  {id:'1.2.2.04.002',sa:'A',hist:'Empréstimos para terceiros (longo prazo)',dc:'D',ts:'DC'},
+  {id:'1.2.2.04.001',sa:'A',hist:'Empréstimos para terceiros (longo prazo) - cta. integrada',dc:'D',ts:'DC'},
+  {id:'1.2.2.06.000',sa:'S',hist:'LÍQUIDO DE FINANCIAMENTOS CONCEDIDOS (LP)',dc:'D',ts:'DC'},
+  {id:'1.2.2.06.003',sa:'A',hist:'(-) Encargos sobre financiamentos a apropriar (longo prazo)',dc:'C',ts:'DC'},
+  {id:'1.2.2.06.002',sa:'A',hist:'Financiamento para terceiros (longo prazo)',dc:'D',ts:'DC'},
+  {id:'1.2.2.06.001',sa:'A',hist:'Financiamento para terceiros (longo prazo) - cta. integrada',dc:'D',ts:'DC'},
+  {id:'1.2.4.00.000',sa:'S',hist:'INVESTIMENTOS',dc:'D',ts:'DC'},
+  {id:'1.2.4.02.000',sa:'S',hist:'CAUÇÃO VALOR RESIDUAL GARANTIDO',dc:'D',ts:'DC'},
+  {id:'1.2.4.02.001',sa:'A',hist:'Caução valor residente sobre leasing',dc:'D',ts:'DC'},
+  {id:'1.2.4.04.000',sa:'S',hist:'OUTROS INVESTIMENTOS',dc:'D',ts:'DC'},
+  {id:'1.2.4.04.001',sa:'A',hist:'Ações',dc:'D',ts:'DC'},
+  {id:'1.2.4.04.002',sa:'A',hist:'Consórcios / Leasing',dc:'D',ts:'DC'},
+  {id:'1.2.4.04.003',sa:'A',hist:'Participações em outras empresas',dc:'D',ts:'DC'},
+  {id:'1.2.6.00.000',sa:'S',hist:'IMOBILIZADOS MATRIZ/FILIAIS',dc:'D',ts:'DC'},
+  {id:'1.2.6.00.001',sa:'S',hist:'Bens sem Restrição - Matriz Administração',dc:'D',ts:'DC'},
+  {id:'1.2.6.00.002',sa:'A',hist:'Moveis e utensilios Matriz Administração',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.000',sa:'S',hist:'IMOBILIZADOS MATRIZ/FILIAIS (Bens)',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.015',sa:'A',hist:'Aeronaves e aparelhos espacias',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.001',sa:'A',hist:'Animais vivos',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.002',sa:'A',hist:'Computadores e periféricos',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.020',sa:'A',hist:'Computadores e Perifericos Matriz Administração',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.019',sa:'A',hist:'Construção em andamento',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.012',sa:'A',hist:'Edifícios e benfeitorias',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.003',sa:'A',hist:'Embarcações',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.014',sa:'A',hist:'Ferramentas',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.004',sa:'A',hist:'Florestamento e reflorestamento',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.005',sa:'A',hist:'Imóveis',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.006',sa:'A',hist:'Instalações',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.007',sa:'A',hist:'Máquinas, equipamentos e instalações',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.008',sa:'A',hist:'Modelos, moldes e matrizes',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.009',sa:'A',hist:'Móveis, utensílios e instalações',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.017',sa:'A',hist:'Outras imobilizações',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.010',sa:'A',hist:'Plantações',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.011',sa:'A',hist:'Recursos minerais',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.016',sa:'A',hist:'Tapetes e outros revestimentos',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.018',sa:'A',hist:'Terrenos',dc:'D',ts:'DC'},
+  {id:'1.2.6.02.013',sa:'A',hist:'Veículos',dc:'D',ts:'DC'},
+  {id:'1.2.6.04.000',sa:'S',hist:'(-) DEPRECIAÇÕES',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.015',sa:'A',hist:'(-) Depreciação de aeronaves e aparelhos espacias',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.002',sa:'A',hist:'(-) Depreciação de animais vivos',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.003',sa:'A',hist:'(-) Depreciação de computadores e periféricos',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.019',sa:'A',hist:'(-) Depreciação de construção em andamento',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.018',sa:'A',hist:'(-) Depreciação de edifícios e benfeitorias',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.004',sa:'A',hist:'(-) Depreciação de embarcações',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.001',sa:'A',hist:'(-) Depreciação de ferramentas',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.005',sa:'A',hist:'(-) Depreciação de florestamento e reflorestamento',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.006',sa:'A',hist:'(-) Depreciação de imóveis',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.007',sa:'A',hist:'(-) Depreciação de instalações',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.008',sa:'A',hist:'(-) Depreciação de máquinas e equipamentos',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.009',sa:'A',hist:'(-) Depreciação de modelos, moldes e matrizes',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.010',sa:'A',hist:'(-) Depreciação de móveis e utensílios',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.016',sa:'A',hist:'(-) Depreciação de outras imobilizações',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.013',sa:'A',hist:'(-) Depreciação de plantações',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.011',sa:'A',hist:'(-) Depreciação de recursos minerais',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.014',sa:'A',hist:'(-) Depreciação de tapetes e outros revestimentos',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.017',sa:'A',hist:'(-) Depreciação de terrenos',dc:'C',ts:'DC'},
+  {id:'1.2.6.04.012',sa:'A',hist:'(-) Depreciação de veículos',dc:'C',ts:'DC'},
+  {id:'1.2.8.00.000',sa:'S',hist:'BENS INTAGÍVEIS',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.000',sa:'S',hist:'CONTROLE DE INTANGÍVEIS',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.005',sa:'A',hist:'Direito de uso linhas telefônicas',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.004',sa:'A',hist:'Direitos autorais',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.006',sa:'A',hist:'Franquias',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.001',sa:'A',hist:'Marcas e patentes',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.007',sa:'A',hist:'Outros intangíveis',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.003',sa:'A',hist:'Pesquisa e desenvolvimento',dc:'D',ts:'DC'},
+  {id:'1.2.8.02.002',sa:'A',hist:'Softwares e programas de computadores',dc:'D',ts:'DC'},
+  {id:'1.2.8.04.000',sa:'S',hist:'(-) AMORTIZAÇÕES DOS INTANGÍVEIS',dc:'C',ts:'DC'},
+  {id:'1.2.8.04.003',sa:'A',hist:'(-) Amortização de direitos autorais',dc:'C',ts:'DC'},
+  {id:'1.2.8.04.006',sa:'A',hist:'(-) Amortização de franquias',dc:'C',ts:'DC'},
+  {id:'1.2.8.04.001',sa:'A',hist:'(-) Amortização de marcas e patentes',dc:'C',ts:'DC'},
+  {id:'1.2.8.04.007',sa:'A',hist:'(-) Amortização de outros intangíveis',dc:'C',ts:'DC'},
+  {id:'1.2.8.04.004',sa:'A',hist:'(-) Amortização de pesquisas e desenvolvimento',dc:'C',ts:'DC'},
+  {id:'1.2.8.04.002',sa:'A',hist:'(-) Amortização de softwares e programas de computadores',dc:'C',ts:'DC'},
+  {id:'1.2.8.04.005',sa:'A',hist:'(-) Amortização direito de uso linhas telefônicas',dc:'C',ts:'DC'},
+  {id:'1.2.9.02.000',sa:'S',hist:'ATIVO COMPENSADO',dc:'D',ts:'DC'},
+  {id:'1.2.9.02.001',sa:'A',hist:'Bens recebidos em comodato',dc:'D',ts:'DC'},
+  {id:'1.2.9.02.005',sa:'A',hist:'Remessa para conserto',dc:'D',ts:'DC'},
+  {id:'1.2.9.02.002',sa:'A',hist:'Remessa para doação',dc:'D',ts:'DC'},
+  {id:'1.2.9.02.004',sa:'A',hist:'Remessa para Industrialização',dc:'D',ts:'DC'},
+  {id:'1.2.9.02.006',sa:'A',hist:'Remessa para troca',dc:'D',ts:'DC'},
+  {id:'1.2.9.02.003',sa:'A',hist:'Retorno de Mercadorias',dc:'D',ts:'DC'},
+  {id:'2.0.0.00.000',sa:'S',hist:'PASSIVO e PATRIMÔNIO LÍQUIDO',dc:'C',ts:'DC'},
+  {id:'2.1.0.00.000',sa:'S',hist:'PASSIVO CIRCULANTE',dc:'C',ts:'DC'},
+  {id:'2.1.1.00.000',sa:'S',hist:'OBRIGAÇÕES A CURTO PRAZO',dc:'C',ts:'DC'},
+  {id:'2.1.1.03.000',sa:'S',hist:'CONTROLE DE FORNECEDORES',dc:'C',ts:'DC'},
+  {id:'2.1.1.03.001',sa:'A',hist:'Fornecedores a pagar - cta. integrada',dc:'C',ts:'DC'},
+  {id:'2.1.1.04.000',sa:'S',hist:'FORNECEDORES DIVERSOS',dc:'C',ts:'DC'},
+  {id:'2.1.1.04.002',sa:'A',hist:'Fornecedores diversos',dc:'C',ts:'DC'},
+  {id:'2.1.1.04.003',sa:'A',hist:'Fornecedores Diversos a Pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.04.001',sa:'A',hist:'Saldo balanço de abertura (fornec.)',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.000',sa:'S',hist:'IMPOSTOS E TRIBUTOS FEDERAIS',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.016',sa:'A',hist:'IRRF a recolher - cod. 3208',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.001',sa:'A',hist:'COFINS a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.005',sa:'A',hist:'CSLL a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.015',sa:'A',hist:'CSLL a recolher L. Real',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.010',sa:'A',hist:'FIA - Fundo Infância Adolescência a depositar',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.013',sa:'A',hist:'IOF a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.004',sa:'A',hist:'IPI a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.019',sa:'A',hist:'IRPF a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.006',sa:'A',hist:'IRPJ a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.009',sa:'A',hist:'IRPJ a recolher L. Real',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.002',sa:'A',hist:'IRRF a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.011',sa:'A',hist:'IRRF a recolher - cod. 0588',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.007',sa:'A',hist:'IRRF a recolher - cod. 1708',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.008',sa:'A',hist:'ITR a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.017',sa:'A',hist:'Outros impostos a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.012',sa:'A',hist:'PIS a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.003',sa:'A',hist:'PIS, COFINS e CSLL a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.014',sa:'A',hist:'Refis a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.018',sa:'A',hist:'Retenção CRF a Recolher (5952)',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.022',sa:'A',hist:'Retenção INSS serv Tomados a Recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.021',sa:'A',hist:'Retenção IR a Recolher (1708/3208)',dc:'C',ts:'DC'},
+  {id:'2.1.1.06.020',sa:'A',hist:'Simples a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.09.000',sa:'S',hist:'IMPOSTOS E TRIBUTOS ESTADUAIS',dc:'C',ts:'DC'},
+  {id:'2.1.1.09.001',sa:'A',hist:'ICMS D/C a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.09.002',sa:'A',hist:'ICMS diversos a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.09.003',sa:'A',hist:'ICMS substituição tributária a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.12.000',sa:'S',hist:'IMPOSTOS E TRIBUTOS MUNICIPAIS',dc:'C',ts:'DC'},
+  {id:'2.1.1.12.001',sa:'A',hist:'ISS serv Prestados a Recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.12.005',sa:'A',hist:'ISSQN a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.12.002',sa:'A',hist:'T F E Taxa de fiscalização de estabelecimento',dc:'D',ts:'DC'},
+  {id:'2.1.1.15.000',sa:'S',hist:'IMPOSTOS E TRIBUTOS TRABALHISTAS',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.007',sa:'A',hist:'DCTF WEB - UNIFICAÇÃO INSS/ IRRF',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.009',sa:'A',hist:'FGTS - Balanço de abertura',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.001',sa:'A',hist:'FGTS a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.002',sa:'A',hist:'GRRF - Multa do FGTS a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.004',sa:'A',hist:'INSS a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.005',sa:'A',hist:'INSS retido a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.008',sa:'A',hist:'ISS - AUTONOMO',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.006',sa:'A',hist:'Parcelamento Previdenciário 61.670.217-5',dc:'C',ts:'DC'},
+  {id:'2.1.1.15.003',sa:'A',hist:'PIS folha de pagamento a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.18.000',sa:'S',hist:'TAXAS E CONTRIBUIÇÕES',dc:'C',ts:'DC'},
+  {id:'2.1.1.18.001',sa:'A',hist:'Contribuição assistencial a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.18.002',sa:'A',hist:'Contribuição confederativa a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.18.003',sa:'A',hist:'Contribuição negocial a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.18.004',sa:'A',hist:'Contribuição sindical a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.18.005',sa:'A',hist:'Taxa de fortalecimento sindical a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.21.000',sa:'S',hist:'OBRIGAÇÕES COM FUNCIONÁRIOS',dc:'C',ts:'DC'},
+  {id:'2.1.1.21.001',sa:'A',hist:'13º salário a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.21.005',sa:'A',hist:'Férias a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.21.002',sa:'A',hist:'Pensão alimentícia sob folha funcionários',dc:'C',ts:'DC'},
+  {id:'2.1.1.21.003',sa:'A',hist:'Rescisões a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.21.006',sa:'A',hist:'Salario a pagar - Balanço de Abertura',dc:'C',ts:'DC'},
+  {id:'2.1.1.21.004',sa:'A',hist:'Salários a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.24.000',sa:'S',hist:'OBRIGAÇÕES COM SÓCIOS',dc:'C',ts:'DC'},
+  {id:'2.1.1.24.004',sa:'A',hist:'Conta Corrente dos Sócios',dc:'C',ts:'DC'},
+  {id:'2.1.1.24.002',sa:'A',hist:'Juros sobre o capital próprio a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.24.003',sa:'A',hist:'Pensão alimentícia na folha dos sócios',dc:'C',ts:'DC'},
+  {id:'2.1.1.24.001',sa:'A',hist:'Retirada pró-labore',dc:'C',ts:'DC'},
+  {id:'2.1.1.27.000',sa:'S',hist:'OBRIGAÇÕES COM AUTÔNOMOS',dc:'C',ts:'DC'},
+  {id:'2.1.1.27.002',sa:'A',hist:'Honorários a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.27.001',sa:'A',hist:'Serviços autônomos a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.30.000',sa:'S',hist:'ALUGUÉIS',dc:'C',ts:'DC'},
+  {id:'2.1.1.30.001',sa:'A',hist:'Aluguéis a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.000',sa:'S',hist:'BANCOS CONTA GARANTIDA',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.003',sa:'A',hist:'Banco HSBC - Conta Garantida',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.005',sa:'A',hist:'Banco Itaú - Conta Garantida',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.007',sa:'A',hist:'Banco Mercantil - Conta garantida',dc:'D',ts:'DC'},
+  {id:'2.1.1.33.002',sa:'A',hist:'Banco Santander - Conta Garantida',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.008',sa:'A',hist:'Banco SICOOB - Conta garantida',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.006',sa:'A',hist:'Caixa Econômica Federal - Conta Garantida',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.001',sa:'A',hist:'Banco Bradesco - Conta Garantida',dc:'C',ts:'DC'},
+  {id:'2.1.1.33.004',sa:'A',hist:'Banco do Brasil - Conta Garantida',dc:'C',ts:'DC'},
+  {id:'2.1.1.36.000',sa:'S',hist:'DUPLICATAS DESCONTADAS',dc:'C',ts:'DC'},
+  {id:'2.1.1.36.001',sa:'A',hist:'BANCO ASAAS',dc:'D',ts:'DC'},
+  {id:'2.1.1.36.002',sa:'A',hist:'Duplicatas descontadas no Banco Bradesco',dc:'C',ts:'DC'},
+  {id:'2.1.1.36.007',sa:'A',hist:'Duplicatas descontadas no banco Caixa Econômica Federal',dc:'C',ts:'DC'},
+  {id:'2.1.1.36.003',sa:'A',hist:'Duplicatas descontadas no Banco do Brasil',dc:'C',ts:'DC'},
+  {id:'2.1.1.36.005',sa:'A',hist:'Duplicatas descontadas no Banco HSBC',dc:'C',ts:'DC'},
+  {id:'2.1.1.36.004',sa:'A',hist:'Duplicatas descontadas no Banco Itaú',dc:'C',ts:'DC'},
+  {id:'2.1.1.36.006',sa:'A',hist:'Duplicatas descontadas no Banco Santander',dc:'C',ts:'DC'},
+  {id:'2.1.1.39.000',sa:'S',hist:'LÍQUIDO DE EMPRÉSTIMOS A PAGAR',dc:'C',ts:'DC'},
+  {id:'2.1.1.39.003',sa:'A',hist:'(-) Encargos financeiros sobre empréstimos (curto prazo)',dc:'D',ts:'DC'},
+  {id:'2.1.1.39.004',sa:'A',hist:'Empréstimo Banco BDMG',dc:'C',ts:'DC'},
+  {id:'2.1.1.39.001',sa:'A',hist:'Empréstimos de terceiros (curto prazo)',dc:'C',ts:'DC'},
+  {id:'2.1.1.39.002',sa:'A',hist:'Empréstimos de terceiros (curto prazo) - cta. integrada',dc:'C',ts:'DC'},
+  {id:'2.1.1.42.000',sa:'S',hist:'LÍQUIDO DE FINANCIAMENTOS A PAGAR',dc:'C',ts:'DC'},
+  {id:'2.1.1.42.001',sa:'A',hist:'(-) Encargos financeiros sobre financiamentos (curto prazo)',dc:'D',ts:'DC'},
+  {id:'2.1.1.42.004',sa:'A',hist:'Financiamentos de terceiros (curto prazo)',dc:'C',ts:'DC'},
+  {id:'2.1.1.42.002',sa:'A',hist:'Financiamentos de terceiros (curto prazo) - cta. integrada',dc:'C',ts:'DC'},
+  {id:'2.1.1.45.000',sa:'S',hist:'ADIANTAMENTOS',dc:'C',ts:'DC'},
+  {id:'2.1.1.45.003',sa:'A',hist:'Adiantamentos Bancários / Solução Imediata',dc:'C',ts:'DC'},
+  {id:'2.1.1.45.001',sa:'A',hist:'Adiantamentos de clientes',dc:'C',ts:'DC'},
+  {id:'2.1.1.45.002',sa:'A',hist:'Nivaldo Teodoro dos Santos',dc:'C',ts:'DC'},
+  {id:'2.1.1.48.000',sa:'S',hist:'CHEQUES A PAGAR',dc:'C',ts:'DC'},
+  {id:'2.1.1.48.001',sa:'A',hist:'Cheques a compensar',dc:'C',ts:'DC'},
+  {id:'2.1.1.48.002',sa:'A',hist:'Cheques emitidos e não apresentados',dc:'C',ts:'DC'},
+  {id:'2.1.1.51.000',sa:'S',hist:'OUTROS VALORES A PAGAR',dc:'C',ts:'DC'},
+  {id:'2.1.1.51.002',sa:'A',hist:'Assinaturas de jornais, boletins e revistas a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.51.003',sa:'A',hist:'Contas a pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.51.004',sa:'A',hist:'Juros a pagar',dc:'D',ts:'DC'},
+  {id:'2.1.1.51.001',sa:'A',hist:'Prêmios de Seguros a Pagar',dc:'C',ts:'DC'},
+  {id:'2.1.1.52.000',sa:'S',hist:'OBRIGAÇÕES COM TERCEIROS',dc:'C',ts:'DC'},
+  {id:'2.1.1.52.002',sa:'A',hist:'FORNECEDOR EM NEGOCIAÇÃO - REFLEX TEMPERVIDROS',dc:'C',ts:'DC'},
+  {id:'2.1.1.52.001',sa:'A',hist:'Venda para entrega futura',dc:'C',ts:'DC'},
+  {id:'2.1.1.54.000',sa:'S',hist:'PARCELAMENTOS',dc:'C',ts:'DC'},
+  {id:'2.1.1.54.003',sa:'A',hist:'INSS - PARCELAMENTO',dc:'C',ts:'DC'},
+  {id:'2.1.1.54.001',sa:'A',hist:'PAES - Parcelamento especial a recolher',dc:'C',ts:'DC'},
+  {id:'2.1.1.54.002',sa:'A',hist:'Parcelamento de impostos a recolher',dc:'C',ts:'DC'},
+  {id:'2.2.0.00.000',sa:'S',hist:'PASSIVO NÃO CIRCULANTE',dc:'C',ts:'DC'},
+  {id:'2.2.1.00.000',sa:'S',hist:'EXIGÍVEL A LONGO PRAZO',dc:'C',ts:'DC'},
+  {id:'2.2.1.01.000',sa:'S',hist:'ALUGUEIS A PAGAR (LP)',dc:'C',ts:'DC'},
+  {id:'2.2.1.01.001',sa:'A',hist:'Alugueis a Pagar',dc:'C',ts:'DC'},
+  {id:'2.2.1.02.000',sa:'S',hist:'LÍQUIDO DE EMPRÉSTIMOS A PAGAR (LP)',dc:'C',ts:'DC'},
+  {id:'2.2.1.02.003',sa:'A',hist:'(-) Encargos financeiros sobre empréstimos (longo prazo)',dc:'D',ts:'DC'},
+  {id:'2.2.1.02.004',sa:'A',hist:'Caixa Econômica Federal (empréstimo LP)',dc:'C',ts:'DC'},
+  {id:'2.2.1.02.006',sa:'A',hist:'Emprestimo a pagar - socios',dc:'C',ts:'DC'},
+  {id:'2.2.1.02.007',sa:'A',hist:'Empréstimos de Dirigentes',dc:'C',ts:'DC'},
+  {id:'2.2.1.02.002',sa:'A',hist:'Empréstimos de terceiros (longo prazo)',dc:'C',ts:'DC'},
+  {id:'2.2.1.02.001',sa:'A',hist:'Empréstimos de terceiros (longo prazo) - cta. integrada',dc:'C',ts:'DC'},
+  {id:'2.2.1.04.000',sa:'S',hist:'LÍQUIDO DE FINANCIAMENTOS A PAGAR (LP)',dc:'C',ts:'DC'},
+  {id:'2.2.1.04.003',sa:'A',hist:'(-) Encargos financeiros sobre financiamentos (longo prazo)',dc:'D',ts:'DC'},
+  {id:'2.2.1.04.001',sa:'A',hist:'Financiamentos de terceiros (longo prazo)',dc:'C',ts:'DC'},
+  {id:'2.2.1.04.002',sa:'A',hist:'Financiamentos de terceiros (longo prazo) - cta. integrada',dc:'C',ts:'DC'},
+  {id:'2.2.1.06.000',sa:'S',hist:'DEPÓSITOS JUDICIAIS',dc:'C',ts:'DC'},
+  {id:'2.2.1.06.001',sa:'A',hist:'Questionamentos judiciais',dc:'C',ts:'DC'},
+  {id:'2.2.1.07.000',sa:'S',hist:'PASSIVO COMPENSADO',dc:'C',ts:'DC'},
+  {id:'2.2.1.07.001',sa:'A',hist:'Bens em comodato a devolver',dc:'C',ts:'DC'},
+  {id:'2.2.1.07.004',sa:'A',hist:'Remessa para conserto (passivo)',dc:'C',ts:'DC'},
+  {id:'2.2.1.07.003',sa:'A',hist:'Remessa para Industrialização (passivo)',dc:'C',ts:'DC'},
+  {id:'2.2.1.07.005',sa:'A',hist:'Remessa para troca (passivo)',dc:'C',ts:'DC'},
+  {id:'2.2.1.07.002',sa:'A',hist:'Retorno de Mercadorias (passivo)',dc:'C',ts:'DC'},
+  {id:'2.3.0.00.000',sa:'S',hist:'PATRIMÔNIO LÍQUIDO',dc:'C',ts:'DC'},
+  {id:'2.3.1.00.000',sa:'S',hist:'CAPITAL SOCIAL',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.000',sa:'S',hist:'CAPITAL SOCIAL REALIZADO',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.002',sa:'A',hist:'(-) Capital social a integralizar',dc:'D',ts:'DC'},
+  {id:'2.3.1.01.001',sa:'A',hist:'Capital social subscrito e integralizado',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.008',sa:'A',hist:'Fernando Otávio Medina',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.009',sa:'A',hist:'Frederico Jose Nogueira',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.010',sa:'A',hist:'Igor Natanael Baia Carvalho',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.006',sa:'A',hist:'Katiane Aparecida V. Pereira',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.003',sa:'A',hist:'Marco Tulio Mendoça Guimarães',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.007',sa:'A',hist:'Maria Mônica Medina',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.011',sa:'A',hist:'Patricia Linces Ferreira',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.005',sa:'A',hist:'Paulo Cesar de Almeida',dc:'C',ts:'DC'},
+  {id:'2.3.1.01.004',sa:'A',hist:'Tiago Bicalho Guglielmelli',dc:'C',ts:'DC'},
+  {id:'2.3.2.00.000',sa:'S',hist:'RESERVAS',dc:'C',ts:'DC'},
+  {id:'2.3.2.01.000',sa:'S',hist:'RESERVAS DE CAPITAL',dc:'C',ts:'DC'},
+  {id:'2.3.2.01.001',sa:'A',hist:'Ágio na emissão de ações',dc:'C',ts:'DC'},
+  {id:'2.3.2.01.002',sa:'A',hist:'Reservas de reavaliação',dc:'C',ts:'DC'},
+  {id:'2.3.2.02.000',sa:'S',hist:'RESERVAS DE LUCROS',dc:'C',ts:'DC'},
+  {id:'2.3.2.02.001',sa:'A',hist:'Reserva de lucros',dc:'C',ts:'DC'},
+  {id:'2.3.2.02.002',sa:'A',hist:'Reserva para aumento de capital',dc:'C',ts:'DC'},
+  {id:'2.3.3.00.000',sa:'S',hist:'RESULTADOS',dc:'C',ts:'DC'},
+  {id:'2.3.3.01.000',sa:'S',hist:'RESULTADOS ACUMULADOS',dc:'C',ts:'DC'},
+  {id:'2.3.3.01.004',sa:'A',hist:'(-) Prejuízos de exercícios anteriores',dc:'D',ts:'DC'},
+  {id:'2.3.3.01.005',sa:'A',hist:'Ajuste de exercícios anteriores',dc:'C',ts:'DC'},
+  {id:'2.3.3.01.001',sa:'A',hist:'Lucros de excercícios anteriores',dc:'C',ts:'DC'},
+  {id:'2.3.3.02.000',sa:'S',hist:'RESULTADOS DO PERÍODO',dc:'C',ts:'DC'},
+  {id:'2.3.3.02.002',sa:'A',hist:'(-) Prejuízos',dc:'D',ts:'DC'},
+  {id:'2.3.3.02.003',sa:'A',hist:'(-) Prejuízos contábeis',dc:'D',ts:'DC'},
+  {id:'2.3.3.02.001',sa:'A',hist:'Lucros',dc:'C',ts:'DC'},
+  {id:'2.4.0.00.000',sa:'S',hist:'PATRIMÔNIO LÍQUIDO SOCIAL',dc:'C',ts:'DC'},
+  {id:'2.4.1.00.000',sa:'S',hist:'PATRIMÔNIO SOCIAL',dc:'C',ts:'DC'},
+  {id:'2.4.1.01.000',sa:'S',hist:'PATRIMÔNIO SOCIAL REALIZADO',dc:'C',ts:'DC'},
+  {id:'2.4.1.01.002',sa:'A',hist:'(-) Déficit',dc:'D',ts:'DC'},
+  {id:'2.4.1.01.003',sa:'A',hist:'Fundo Patrimônio Social',dc:'C',ts:'DC'},
+  {id:'2.4.1.01.004',sa:'A',hist:'Patrimônio Social',dc:'C',ts:'DC'},
+  {id:'2.4.1.01.006',sa:'A',hist:'Resultado - Deficit verificado no periodo',dc:'D',ts:'DC'},
+  {id:'2.4.1.01.005',sa:'A',hist:'Resultado - Superavit verificado no periodo',dc:'C',ts:'DC'},
+  {id:'2.4.1.01.001',sa:'A',hist:'Superávit',dc:'C',ts:'DC'},
+  {id:'3.0.0.00.000',sa:'S',hist:'RECEITAS',dc:'C',ts:'DC'},
+  {id:'3.1.0.00.000',sa:'S',hist:'RECEITA OPERACIONAL BRUTA',dc:'C',ts:'DC'},
+  {id:'3.1.1.00.000',sa:'S',hist:'RECEITA DE VENDAS',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.000',sa:'S',hist:'RECEITA COM COMERCIALIZAÇÃO DE PRODUTOS',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.006',sa:'A',hist:'Receita de venda de souvenir',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.004',sa:'A',hist:'Receita com industrialização',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.007',sa:'A',hist:'Receita com venda de Brigadeiros',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.005',sa:'A',hist:'Receita de Cantina/Lanchonete',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.009',sa:'A',hist:'Receita de venda teatro (Cantina/Camiseta/Etc)',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.001',sa:'A',hist:'Vendas a prazo',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.002',sa:'A',hist:'Vendas a vista',dc:'C',ts:'DC'},
+  {id:'3.1.1.01.003',sa:'A',hist:'Vendas cond. pgto. antecipado',dc:'C',ts:'DC'},
+  {id:'3.1.2.00.000',sa:'S',hist:'RECEITA COM ATIVIDADES - FIM',dc:'C',ts:'DC'},
+  {id:'3.1.2.03.000',sa:'S',hist:'RECEITA COM ATIVIDADES - FIM (Cultural)',dc:'C',ts:'DC'},
+  {id:'3.1.2.03.003',sa:'A',hist:'Receita com Plataforma de Streaming - Nissi Play',dc:'C',ts:'DC'},
+  {id:'3.1.2.03.005',sa:'A',hist:'Receita de Captação - Acampamento Nissi',dc:'C',ts:'DC'},
+  {id:'3.1.2.03.002',sa:'A',hist:'Receita com Cursos - Escola de Artes',dc:'C',ts:'DC'},
+  {id:'3.1.2.03.006',sa:'A',hist:'Receita de Apresentações Teatrais',dc:'C',ts:'DC'},
+  {id:'3.1.2.03.001',sa:'A',hist:'Receita de Ingressos Teatrais',dc:'C',ts:'DC'},
+  {id:'3.1.2.03.004',sa:'A',hist:'Receita de Serviços Educ e Culturais - Fazenda de Contos',dc:'C',ts:'DC'},
+  {id:'3.1.2.04.000',sa:'S',hist:'RECEITA DE SERVIÇOS PRESTADOS',dc:'C',ts:'DC'},
+  {id:'3.1.2.04.002',sa:'A',hist:'Serviços prestados a prazo',dc:'C',ts:'DC'},
+  {id:'3.1.2.04.001',sa:'A',hist:'Serviços prestados a vista',dc:'C',ts:'DC'},
+  {id:'3.1.2.04.003',sa:'A',hist:'Serviços prestados cond. pgto. antecipado',dc:'C',ts:'DC'},
+  {id:'3.1.2.04.004',sa:'A',hist:'Serviços prestados transportes e fretes a prazo',dc:'C',ts:'DC'},
+  {id:'3.1.2.04.005',sa:'A',hist:'Serviços prestados transportes e fretes a vista',dc:'C',ts:'DC'},
+  {id:'3.1.2.04.006',sa:'A',hist:'Serviços prestados transportes fretes cond. pgto. antecipado',dc:'C',ts:'DC'},
+  {id:'3.1.3.00.000',sa:'S',hist:'RECEITA COM PATROCINIOS',dc:'C',ts:'DC'},
+  {id:'3.1.3.01.000',sa:'S',hist:'RECEITA DE DOAÇÕES E CONTRIBUIÇÕES',dc:'C',ts:'DC'},
+  {id:'3.1.3.01.001',sa:'A',hist:'Dízimos e Ofertas',dc:'C',ts:'DC'},
+  {id:'3.1.3.01.004',sa:'A',hist:'Doação de apadrinhamento - NISSI',dc:'C',ts:'DC'},
+  {id:'3.1.3.01.002',sa:'A',hist:'Doações de Pessoas Físicas',dc:'C',ts:'DC'},
+  {id:'3.1.3.01.003',sa:'A',hist:'Doações de Pessoas Jurídicas',dc:'C',ts:'DC'},
+  {id:'3.1.3.03.000',sa:'S',hist:'RECEITA COM PATROCINIOS (Cultural)',dc:'C',ts:'DC'},
+  {id:'3.1.3.03.001',sa:'A',hist:'Patrocínio Cultural e Social',dc:'C',ts:'DC'},
+  {id:'3.1.6.00.000',sa:'S',hist:'RECEITA COM SUBVENÇÕES E PREMIAÇÕES PUBLICAS',dc:'C',ts:'DC'},
+  {id:'3.1.6.00.001',sa:'A',hist:'Prêmios de Entes Públicos',dc:'C',ts:'DC'},
+  {id:'3.1.6.00.002',sa:'A',hist:'Termos de Fomento/Colaboração',dc:'C',ts:'DC'},
+  {id:'3.1.6.01.000',sa:'S',hist:'RECEITAS FINANCEIRAS',dc:'C',ts:'DC'},
+  {id:'3.1.6.01.001',sa:'A',hist:'Descontos financeiros obtidos',dc:'C',ts:'DC'},
+  {id:'3.1.6.01.002',sa:'A',hist:'Juros recebidos',dc:'C',ts:'DC'},
+  {id:'3.1.6.01.005',sa:'A',hist:'Receitas de Aluguel',dc:'C',ts:'DC'},
+  {id:'3.1.6.01.004',sa:'A',hist:'Rendimentos de aplicações financeira',dc:'C',ts:'DC'},
+  {id:'3.1.6.01.006',sa:'A',hist:'Rendimentos de aplicações financeira Ag 0716-61192-6 Palco',dc:'C',ts:'DC'},
+  {id:'3.1.6.01.003',sa:'A',hist:'Variação cambial',dc:'C',ts:'DC'},
+  {id:'3.2.0.00.000',sa:'S',hist:'(-) DEDUÇÕES DA RECEITA BRUTA',dc:'D',ts:'DC'},
+  {id:'3.2.1.00.000',sa:'S',hist:'(-) DEDUÇÕES DA RECEITA BRUTA (Impostos)',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.000',sa:'S',hist:'(-) IMPOSTOS, TAXAS E CONTRIBUIÇÕES',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.005',sa:'A',hist:'(-) COFINS sobre faturamento',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.008',sa:'A',hist:'(-) CSLL sobre faturamento',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.009',sa:'A',hist:'(-) ICMS sobre faturamento',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.002',sa:'A',hist:'(-) ICMS substituição tributária',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.007',sa:'A',hist:'(-) IPI sobre faturamento',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.003',sa:'A',hist:'(-) IRPJ sobre faturamento',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.010',sa:'A',hist:'(-) ISSQN sobre serviços',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.004',sa:'A',hist:'(-) PIS sobre faturamento',dc:'D',ts:'DC'},
+  {id:'3.2.1.01.006',sa:'A',hist:'(-) Simples sobre faturamento',dc:'D',ts:'DC'},
+  {id:'3.2.1.02.000',sa:'S',hist:'(-) DEVOLUÇÕES',dc:'D',ts:'DC'},
+  {id:'3.2.1.02.001',sa:'A',hist:'(-) Devoluções de vendas',dc:'D',ts:'DC'},
+  {id:'3.3.0.00.000',sa:'S',hist:'OUTRAS RECEITAS OPERACIONAIS',dc:'C',ts:'DC'},
+  {id:'3.3.1.00.000',sa:'S',hist:'OUTRAS RECEITAS FINANCEIRAS',dc:'C',ts:'DC'},
+  {id:'3.3.1.01.000',sa:'S',hist:'OUTRAS RECEITAS FINANCEIRAS (Detalhe)',dc:'C',ts:'DC'},
+  {id:'3.3.1.01.003',sa:'A',hist:'Estorno',dc:'D',ts:'DC'},
+  {id:'3.3.1.01.002',sa:'A',hist:'Juros recebidos (outros)',dc:'C',ts:'DC'},
+  {id:'3.3.1.01.001',sa:'A',hist:'Outras receitas financeiras',dc:'C',ts:'DC'},
+  {id:'3.3.2.00.000',sa:'S',hist:'RECUPERAÇÕES',dc:'C',ts:'DC'},
+  {id:'3.3.2.01.000',sa:'S',hist:'RECUPERAÇÕES (Detalhe)',dc:'C',ts:'DC'},
+  {id:'3.3.2.01.002',sa:'A',hist:'COFINS (recuperação)',dc:'C',ts:'DC'},
+  {id:'3.3.2.01.001',sa:'A',hist:'Reversão de provisões',dc:'C',ts:'DC'},
+  {id:'3.3.3.00.000',sa:'S',hist:'OUTRAS RECEITAS OPERACIONAIS (Detalhe)',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.000',sa:'S',hist:'OUTRAS RECEITAS OPERACIONAIS (Analítico)',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.006',sa:'A',hist:'Acordo extrajudicial',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.004',sa:'A',hist:'Amostra grátis',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.005',sa:'A',hist:'Bonificações',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.007',sa:'A',hist:'Dizimo',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.001',sa:'A',hist:'Ganhos de capital na venda de imobilizado',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.008',sa:'A',hist:'Oferta',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.009',sa:'A',hist:'Ofertas Especiais',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.002',sa:'A',hist:'Outras receitas',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.003',sa:'A',hist:'Realização de reserva de reavaliação',dc:'C',ts:'DC'},
+  {id:'3.3.3.01.010',sa:'A',hist:'Reembolsos de Frete / Transporte',dc:'C',ts:'DC'},
+  {id:'3.3.3.02.000',sa:'S',hist:'RECEITAS DE EXCLUSÕES',dc:'C',ts:'DC'},
+  {id:'3.3.3.02.003',sa:'A',hist:'Lucros e divididendos de investimentos',dc:'C',ts:'DC'},
+  {id:'3.3.3.02.001',sa:'A',hist:'Outras receitas de exclusões',dc:'C',ts:'DC'},
+  {id:'3.3.3.02.002',sa:'A',hist:'Resultado positivo da equivalência patrimonial',dc:'C',ts:'DC'},
+  {id:'4.0.0.00.000',sa:'S',hist:'DESPESAS',dc:'D',ts:'DC'},
+  {id:'4.1.0.00.000',sa:'S',hist:'DESPESAS OPERACIONAIS',dc:'D',ts:'DC'},
+  {id:'4.1.1.00.000',sa:'S',hist:'DESPESAS OPERACIONAIS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'4.1.1.01.000',sa:'S',hist:'DESPESAS COMERCIAIS',dc:'D',ts:'DC'},
+  {id:'4.1.1.01.005',sa:'A',hist:'Comissão Cartão de Crédito - Cielo',dc:'D',ts:'DC'},
+  {id:'4.1.1.01.003',sa:'A',hist:'Fretes e transportes',dc:'D',ts:'DC'},
+  {id:'4.1.1.01.006',sa:'A',hist:'Manutenção de cartão',dc:'C',ts:'DC'},
+  {id:'4.1.1.01.001',sa:'A',hist:'Perdas nos recebimentos de créditos',dc:'D',ts:'DC'},
+  {id:'4.1.1.01.004',sa:'A',hist:'SPC - Serviço de proteção ao crédito',dc:'D',ts:'DC'},
+  {id:'4.1.1.01.002',sa:'A',hist:'Taxa de administração de cartões de crédito',dc:'D',ts:'DC'},
+  {id:'4.1.1.01.007',sa:'A',hist:'Uber/Taxí',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.000',sa:'S',hist:'DESPESAS TRABALHISTAS',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.004',sa:'A',hist:'13º salário e adicionais',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.027',sa:'A',hist:'13º salário e adicionais Escritorio Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.028',sa:'A',hist:'13º salário e adicionais Restaurante Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.025',sa:'A',hist:'13º salário e adicionais Sitio Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.026',sa:'A',hist:'13º salário e adicionais Teatro Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.006',sa:'A',hist:'Acessório, figurinos e utensilios para peça',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.015',sa:'A',hist:'Assistência médica e social',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.011',sa:'A',hist:'Contribuição sindical',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.009',sa:'A',hist:'Contribuição sindicato profissional',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.007',sa:'A',hist:'Férias e adicionais',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.023',sa:'A',hist:'Ferias e adicionais -Escritorio Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.024',sa:'A',hist:'Ferias e adicionais -Teatro Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.021',sa:'A',hist:'Ferias e adicionais - Restaurante Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.022',sa:'A',hist:'Ferias e adicionais - Sitio Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.008',sa:'A',hist:'FGTS - Fundo de Garantia por Tempo de Serviço',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.013',sa:'A',hist:'Indenizações',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.005',sa:'A',hist:'INSS - Instituto Nacional de Seguridade Social',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.001',sa:'A',hist:'IRRF retido trabalho assalariado',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.029',sa:'A',hist:'Pagamentos Eventuais a Colaboradores',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.012',sa:'A',hist:'PAT - Programa de alimentação do trabalhador',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.002',sa:'A',hist:'PIS folha de pagamento',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.003',sa:'A',hist:'Salários e adicionais',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.017',sa:'A',hist:'Salários e adicionais - Escritotio Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.019',sa:'A',hist:'Salários e adicionais - Restaurante Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.018',sa:'A',hist:'Salários e adicionais - Sitio Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.020',sa:'A',hist:'Salários e adicionais - Teatro Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.016',sa:'A',hist:'Seguro de vida em grupo',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.014',sa:'A',hist:'Uniformes e materiais de proteção',dc:'D',ts:'DC'},
+  {id:'4.1.1.02.010',sa:'A',hist:'Vale transporte',dc:'D',ts:'DC'},
+  {id:'4.1.2.00.000',sa:'S',hist:'DESPESAS FINANCEIRAS',dc:'D',ts:'DC'},
+  {id:'4.1.2.01.000',sa:'S',hist:'DESPESAS FINANCEIRAS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'4.1.2.01.005',sa:'A',hist:'Descontos concedidos em duplicatas',dc:'D',ts:'DC'},
+  {id:'4.1.2.01.001',sa:'A',hist:'Descontos concedidos em empréstimos',dc:'D',ts:'DC'},
+  {id:'4.1.2.01.002',sa:'A',hist:'Encargos financeiros',dc:'D',ts:'DC'},
+  {id:'4.1.2.01.003',sa:'A',hist:'Juros e despesas bancárias',dc:'D',ts:'DC'},
+  {id:'4.1.2.01.004',sa:'A',hist:'Juros sobre capital próprio',dc:'D',ts:'DC'},
+  {id:'4.1.2.01.006',sa:'A',hist:'Tarifás Bancárias',dc:'D',ts:'DC'},
+  {id:'4.1.3.00.000',sa:'S',hist:'DESPESAS TRIBUTÁRIAS',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.000',sa:'S',hist:'DESPESAS TRIBUTÁRIAS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.001',sa:'A',hist:'ICMS diversos',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.002',sa:'A',hist:'ICMS frete',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.009',sa:'A',hist:'Impostos, multas e taxas diversas',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.004',sa:'A',hist:'IOF',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.005',sa:'A',hist:'IPTU',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.006',sa:'A',hist:'IPVA',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.011',sa:'A',hist:'IRPF',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.013',sa:'A',hist:'IRRF s/ aluguel',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.007',sa:'A',hist:'IRRF s/ Aplicação',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.008',sa:'A',hist:'ITR',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.010',sa:'A',hist:'Outros impostos',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.017',sa:'A',hist:'Outros Parcelamentos',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.016',sa:'A',hist:'Parcelamento ICMS',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.014',sa:'A',hist:'Parcelamento Previdenciário',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.015',sa:'A',hist:'Parcelamento Simples Nacional',dc:'D',ts:'DC'},
+  {id:'4.1.3.01.012',sa:'A',hist:'Taxa ISSQN/TFLF/DAMSP',dc:'D',ts:'DC'},
+  {id:'4.1.4.00.000',sa:'S',hist:'DESPESAS ADMINISTRATIVAS',dc:'D',ts:'DC'},
+  {id:'4.1.4.01.000',sa:'S',hist:'DESPESAS ADMINISTRATIVAS TRABALHISTAS',dc:'D',ts:'DC'},
+  {id:'4.1.4.01.001',sa:'A',hist:'13º salário e adicionais do setor administrativo',dc:'D',ts:'DC'},
+  {id:'4.1.4.01.002',sa:'A',hist:'Contribuição sindical patronal',dc:'D',ts:'DC'},
+  {id:'4.1.4.01.003',sa:'A',hist:'Férias e adicionais de férias do setor administrativo',dc:'D',ts:'DC'},
+  {id:'4.1.4.01.004',sa:'A',hist:'Retirada pró-labore',dc:'D',ts:'DC'},
+  {id:'4.1.4.01.005',sa:'A',hist:'Salários e adicionais de salários do setor administrativo',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.000',sa:'S',hist:'DESPESAS ADMINISTRATIVAS GERAIS',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.001',sa:'A',hist:'Água e esgoto',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.042',sa:'A',hist:'Ajuda de Custo',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.057',sa:'A',hist:'Ajuda de Custo Transporte',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.038',sa:'A',hist:'Ascipam',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.030',sa:'A',hist:'Assinaturas de jornais, boletins e revistas',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.046',sa:'A',hist:'Assistencia Contábil',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.022',sa:'A',hist:'Bens duráveis',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.028',sa:'A',hist:'Brindes, contribuições e donativos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.003',sa:'A',hist:'Cartório, xerox e autenticações',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.023',sa:'A',hist:'Combustíveis e lubrificantes',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.033',sa:'A',hist:'Comissões',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.004',sa:'A',hist:'Condomínio',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.026',sa:'A',hist:'Conservação de veículos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.005',sa:'A',hist:'Conservação do imóvel',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.047',sa:'A',hist:'CONSUMO DE GÁS',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.036',sa:'A',hist:'Core-MG - Taxa anual',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.006',sa:'A',hist:'Correios e telégrafos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.007',sa:'A',hist:'Cursos e treinamentos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.008',sa:'A',hist:'Depreciações de imobilizados',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.041',sa:'A',hist:'Despesa com Alimentação',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.045',sa:'A',hist:'Despesa com Cartao de Credito',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.051',sa:'A',hist:'Despesa com farmácia',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.061',sa:'A',hist:'Despesa com Participação em Feiras e Eventos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.052',sa:'A',hist:'Despesa com Passagem',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.043',sa:'A',hist:'Despesa com Viagem',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.048',sa:'A',hist:'DESPESA DE HOSPEDAGEM',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.060',sa:'A',hist:'Despesas com Certificação Digital',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.059',sa:'A',hist:'Despesas com Energia Elétrica - Apto. Brigadeiro',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.055',sa:'A',hist:'Despesas com Energia Elétrica - Restaurante Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.056',sa:'A',hist:'Despesas com Energia Elétrica - Teatro',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.054',sa:'A',hist:'Despesas com Locação de Veículos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.064',sa:'A',hist:'Despesas com Regularização Jurídica e Administrativa',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.002',sa:'A',hist:'Despesas de Aluguel',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.009',sa:'A',hist:'Diárias de viagem',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.032',sa:'A',hist:'Diárias de viagens, lanches e refeições',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.063',sa:'A',hist:'EMPRÉSTIMO',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.010',sa:'A',hist:'Energia elétrica',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.044',sa:'A',hist:'Eventos e Confraternização',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.037',sa:'A',hist:'Gastos com informática',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.012',sa:'A',hist:'Honorários',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.050',sa:'A',hist:'Internet e Telefonia Móvel',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.039',sa:'A',hist:'Issqn',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.014',sa:'A',hist:'Manutenção de sistemas e internet',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.013',sa:'A',hist:'Manutenção e reparos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.034',sa:'A',hist:'Materiais de embalagens',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.062',sa:'A',hist:'Materiais e Ferramentas para Divulgação',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.016',sa:'A',hist:'Material de cozinha',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.017',sa:'A',hist:'Material de escritório',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.018',sa:'A',hist:'Material de limpeza',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.024',sa:'A',hist:'Material de uso e consumo',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.019',sa:'A',hist:'Mensalidades',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.049',sa:'A',hist:'Original S.A.',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.029',sa:'A',hist:'Outros fretes e transportes',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.027',sa:'A',hist:'Pedágio',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.031',sa:'A',hist:'Perdas de estoques',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.040',sa:'A',hist:'Prebenda',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.025',sa:'A',hist:'Propaganda, Publicidade e Patrocínio',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.058',sa:'A',hist:'Reembolso - Combustível',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.020',sa:'A',hist:'Reformas em edificações',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.021',sa:'A',hist:'Seguros',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.035',sa:'A',hist:'Serviços autônomos',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.053',sa:'A',hist:'Serviços autônomos Nissi',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.015',sa:'A',hist:'Serviços tomados de terceiros',dc:'D',ts:'DC'},
+  {id:'4.1.4.02.011',sa:'A',hist:'Telecomunicação',dc:'D',ts:'DC'},
+  {id:'4.2.0.00.000',sa:'S',hist:'OUTRAS DESPESAS OPERACIONAIS',dc:'D',ts:'DC'},
+  {id:'4.2.1.00.000',sa:'S',hist:'OUTRAS DESPESAS OPERACIONAIS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'4.2.1.01.000',sa:'S',hist:'OUTRAS DESPESAS OPERACIONAIS (Analítico)',dc:'D',ts:'DC'},
+  {id:'4.2.1.01.004',sa:'A',hist:'Acordos Judiciais',dc:'D',ts:'DC'},
+  {id:'4.2.1.01.005',sa:'A',hist:'Dizímos dos dizimos',dc:'D',ts:'DC'},
+  {id:'4.2.1.01.003',sa:'A',hist:'Multas por infrações fiscais',dc:'D',ts:'DC'},
+  {id:'4.2.1.01.001',sa:'A',hist:'Outras despesas',dc:'D',ts:'DC'},
+  {id:'4.2.1.01.002',sa:'A',hist:'Perda de capital na venda de imobilizado',dc:'D',ts:'DC'},
+  {id:'4.2.1.01.006',sa:'A',hist:'Reembolso',dc:'D',ts:'DC'},
+  {id:'4.2.1.02.000',sa:'S',hist:'DESPESAS OPERACIONAIS COM PROJETOS',dc:'D',ts:'DC'},
+  {id:'4.2.1.02.001',sa:'A',hist:'Despesas com Projetos',dc:'D',ts:'DC'},
+  {id:'4.2.1.02.004',sa:'A',hist:'Apoio a missionários / Ações missionarias',dc:'D',ts:'DC'},
+  {id:'4.2.1.02.003',sa:'A',hist:'Parceria para Produção - Projeto Amazônia',dc:'D',ts:'DC'},
+  {id:'4.2.1.02.002',sa:'A',hist:'Projeto Angola Nissi',dc:'D',ts:'DC'},
+  {id:'4.2.2.00.000',sa:'S',hist:'DESPESAS INDEDUTÍVEIS',dc:'D',ts:'DC'},
+  {id:'4.2.2.01.000',sa:'S',hist:'DESPESAS INDEDUTÍVEIS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'4.2.2.01.001',sa:'A',hist:'Gastos sem documentação hábil',dc:'D',ts:'DC'},
+  {id:'4.2.2.01.002',sa:'A',hist:'Multas por infrações de trânsito',dc:'D',ts:'DC'},
+  {id:'4.2.2.01.004',sa:'A',hist:'Outros gastos indedutíveis',dc:'D',ts:'DC'},
+  {id:'5.0.0.00.000',sa:'S',hist:'CUSTOS',dc:'D',ts:'DC'},
+  {id:'5.3.0.00.000',sa:'S',hist:'CUSTOS COMERCIAIS',dc:'D',ts:'DC'},
+  {id:'5.3.1.00.000',sa:'S',hist:'CUSTOS COMERCIAIS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'5.3.1.01.000',sa:'S',hist:'CUSTOS COMERCIAIS (Analítico)',dc:'D',ts:'DC'},
+  {id:'5.3.1.01.001',sa:'A',hist:'Custo das mercadorias vendidas',dc:'D',ts:'DC'},
+  {id:'5.4.0.00.000',sa:'S',hist:'CUSTOS COM SERVIÇOS',dc:'D',ts:'DC'},
+  {id:'5.4.1.00.000',sa:'S',hist:'CUSTOS COM SERVIÇOS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'5.4.1.01.000',sa:'S',hist:'CUSTOS COM SERVIÇOS (Analítico)',dc:'D',ts:'DC'},
+  {id:'5.4.1.01.004',sa:'A',hist:'13º salário e adicionais dos serviços',dc:'D',ts:'DC'},
+  {id:'5.4.1.01.001',sa:'A',hist:'Custo dos produtos utilizados na prestação de serviços',dc:'D',ts:'DC'},
+  {id:'5.4.1.01.003',sa:'A',hist:'Férias e adicionais de férias dos serviços',dc:'D',ts:'DC'},
+  {id:'5.4.1.01.002',sa:'A',hist:'Salários e adicionais de salários dos serviços',dc:'D',ts:'DC'},
+  {id:'5.5.0.00.000',sa:'S',hist:'CUSTOS INDUSTRIAIS',dc:'D',ts:'DC'},
+  {id:'5.5.1.00.000',sa:'S',hist:'CUSTOS INDUSTRIAIS (Detalhe)',dc:'D',ts:'DC'},
+  {id:'5.5.1.01.000',sa:'S',hist:'CUSTOS INDUSTRIAIS (Analítico)',dc:'D',ts:'DC'},
+  {id:'5.5.1.01.004',sa:'A',hist:'13º salário e adicionais da indústria',dc:'D',ts:'DC'},
+  {id:'5.5.1.01.002',sa:'A',hist:'Custos dos produtos acabados',dc:'D',ts:'DC'},
+  {id:'5.5.1.01.003',sa:'A',hist:'Férias e adicionais de férias da indústria',dc:'D',ts:'DC'},
+  {id:'5.5.1.01.001',sa:'A',hist:'Salários e adicionais de salários da indústria',dc:'D',ts:'DC'},
+  {id:'6.0.0.00.000',sa:'S',hist:'RESULTADO DO EXERCÍCIO',dc:'D',ts:'DC'},
+  {id:'6.1.0.00.000',sa:'S',hist:'RESULTADO DO EXERCÍCIO (Detalhe)',dc:'D',ts:'DC'},
+  {id:'6.1.1.00.000',sa:'S',hist:'RESULTADO DO EXERCÍCIO (Analítico)',dc:'D',ts:'DC'},
+  {id:'6.1.1.01.000',sa:'S',hist:'RESULTADO DO EXERCÍCIO (Sub)',dc:'D',ts:'DC'},
+  {id:'6.1.1.01.002',sa:'A',hist:'Implantação de Saldo anterior',dc:'D',ts:'DC'},
+  {id:'6.1.1.01.001',sa:'A',hist:'Resultado do exercício',dc:'D',ts:'DC'}
+];</script>
+<script>
+// ============================================================
+// ESTADO GLOBAL
+// ============================================================
+const S = {
+  clientes:[], fornecedores:[], lancamentos:[], bancos:[],
+  plano:[], conciliacao:[],
+  segL:'todos', ltipo:'receber', editPlanId:null
+};
+
+// ============================================================
+// FUNÇÕES UTILITÁRIAS (function declarations — sempre hoisted)
+// ============================================================
+function fmt(v){return'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function today(){return new Date().toISOString().split('T')[0];}
+function sbadge(s){
+  const m={
+    'Ativo':'bg-g','Inativo':'bg-gr','Suspenso':'bg-a',
+    'aberto':'bg-b','baixado':'bg-g','atraso':'bg-r',
+    'Em Aberto':'bg-b','Baixado':'bg-g','Em Atraso':'bg-r',
+    'Pago':'bg-g','Pendente':'bg-a','Cancelado':'bg-gr','Atrasado':'bg-r',
+    'Enviado':'bg-b','Aprovado':'bg-g','Rascunho':'bg-gr',
+  };
+  return`<span class="badge ${m[s]||'bg-gr'}">${s}</span>`;
+}
+function toast(msg,ok=true){
+  const t=document.getElementById('toast');
+  document.getElementById('t-msg').textContent=msg;
+  document.getElementById('t-dot').style.background=ok?'var(--green)':'var(--red)';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function ft(id,q){
+  const tb=document.getElementById(id);
+  if(!tb)return;
+  Array.from(tb.rows).forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});
+}
+function dov(e,el){e.preventDefault();el.style.borderColor='var(--accent)';}
+function dlv(el){el.style.borderColor='var(--border2)';}
+function ddf(e,tipo){e.preventDefault();const f=e.dataTransfer.files[0];if(f)pf(f,tipo);}
+function hf(e,tipo){const f=e.target.files[0];if(f)pf(f,tipo);}
+
+// ============================================================
+// NAVEGAÇÃO
+// ============================================================
+const PAGE_INFO={
+  dashboard:{t:'Dashboard',s:'Visão geral do escritório'},
+  clientes:{t:'Clientes',s:'Gestão de clientes do escritório'},
+  fornecedores:{t:'Fornecedores',s:'Gestão de fornecedores'},
+  lancamentos:{t:'Lançamentos Financeiros',s:'Controle de pagamentos e recebimentos'},
+  bancos:{t:'Bancos Cadastrados',s:'Contas bancárias do escritório'},
+  conciliacao:{t:'Conciliação Bancária',s:'Importação e conciliação de extratos OFX'},
+  planoconta:{t:'Plano de Contas',s:PLANO_COMPLETO.length+' contas cadastradas (672 registros)'},
+  funil:{t:'Funil de Vendas',s:'Gerencie leads, orçamentos e contratos'},
+  relatorios:{t:'Relatórios',s:'Relatórios gerenciais'},
+  radar:{t:'Radar Fiscal',s:'Obrigações fiscais'},
+  simulador:{t:'Simulador Tributário',s:'Planejamento tributário'},
+};
+
+function go(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  const info=PAGE_INFO[page]||{t:page,s:''};
+  document.getElementById('pt').textContent=info.t;
+  document.getElementById('ps').textContent=info.s;
+  // topbar actions
+  const ta=document.getElementById('ta');
+  ta.innerHTML='';
+  if(page==='clientes')ta.innerHTML='<button class="btn bs bsm" onclick="goTab(\'tci\')">📥 Importar Planilha</button><button class="btn bp bsm" onclick="openM(\'m-cli\')">+ Novo Cliente</button>';
+  else if(page==='fornecedores')ta.innerHTML='<button class="btn bp bsm" onclick="openM(\'m-forn\')">+ Novo Fornecedor</button>';
+  else if(page==='lancamentos')ta.innerHTML='<button class="btn bp bsm" onclick="abrirLanc()">+ Lançamento</button>';
+  else if(page==='bancos')ta.innerHTML='<button class="btn bp bsm" onclick="openM(\'m-banco\')">+ Novo Banco</button>';
+  else if(page==='planoconta')ta.innerHTML='<button class="btn bp bsm" onclick="openM(\'m-plan\')">+ Nova Conta</button>';
+  else if(page==='funil')ta.innerHTML='<button class="btn bp bsm" id="funil-add-btn" onclick="funilNovo()">+ Novo Lead</button>';
+  // init
+  if(page==='lancamentos')renderLancs();
+  if(page==='bancos')renderBancos();
+  if(page==='dashboard')updateDash();
+  if(page==='conciliacao')renderConc();
+  if(page==='planoconta')buildPlano();
+  if(page==='funil')buildFunil();
+}
+
+function stab(el,target){
+  const p=el.closest('.page');
+  p.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['tcl','tci','tfl','tfi'].filter(id=>document.getElementById(id)&&p.contains(document.getElementById(id))).forEach(id=>{
+    document.getElementById(id).style.display=id===target?'':'none';
+  });
+}
+function goTab(id){
+  const tabs=document.getElementById('page-clientes').querySelectorAll('.tab');
+  if(id==='tci'&&tabs[1])tabs[1].click();
+}
+window.onclick=e=>{if(e.target.classList.contains('mo'))e.target.classList.remove('open');};
+
+// ============================================================
+// CLIENTES
+// ============================================================
+function saveCli(data){
+  const nome=data?.n||document.getElementById('c-n').value.trim();
+  if(!nome){toast('Informe o nome do cliente.',false);return;}
+  S.clientes.push({
+    id:Date.now()+Math.random(),
+    nome,
+    doc:data?.d||document.getElementById('c-d').value,
+    regime:data?.r||document.getElementById('c-r').value,
+    email:data?.e||document.getElementById('c-e').value,
+    tel:data?.t||document.getElementById('c-t').value,
+    cidade:data?.ci||document.getElementById('c-ci').value,
+    estado:data?.es||document.getElementById('c-es').value,
+    status:data?.s||document.getElementById('c-s').value,
+  });
+  if(!data){closeM('m-cli');document.getElementById('c-n').value='';toast('Cliente salvo com sucesso!');}
+  renderClis();updateBadges();
+}
+function renderClis(){
+  const tb=document.getElementById('cli-tb');
+  if(!S.clientes.length){tb.innerHTML='<tr><td colspan="8"><div class="es">Nenhum cliente cadastrado. Clique em "+ Novo Cliente" para começar.</div></td></tr>';return;}
+  tb.innerHTML=S.clientes.map(c=>`<tr>
+    <td><strong>${c.nome}</strong><br><span style="font-size:11px;color:var(--text3)">${c.email||''}</span></td>
+    <td><code style="font-size:11px;background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--text2)">${c.doc||'—'}</code></td>
+    <td><span class="badge bg-b" style="font-size:11px">${c.regime||'—'}</span></td>
+    <td style="font-size:12px">${c.email||'—'}</td>
+    <td style="font-size:12px">${c.tel||'—'}</td>
+    <td style="font-size:12px">${c.cidade||'—'}</td>
+    <td>${sbadge(c.status||'Ativo')}</td>
+    <td>
+      <button class="btn bs bsm" onclick="editCli(${c.id})" title="Editar">✏</button>
+      <button class="btn bd bsm" onclick="delCli(${c.id})" title="Excluir">✕</button>
+    </td>
+  </tr>`).join('');
+}
+function delCli(id){if(!confirm('Excluir este cliente?'))return;S.clientes=S.clientes.filter(c=>c.id!==id);renderClis();updateBadges();toast('Cliente removido.');}
+function editCli(id){
+  const c=S.clientes.find(x=>x.id===id);if(!c)return;
+  document.getElementById('c-n').value=c.nome;
+  document.getElementById('c-d').value=c.doc||'';
+  document.getElementById('c-r').value=c.regime||'Simples Nacional';
+  document.getElementById('c-e').value=c.email||'';
+  document.getElementById('c-t').value=c.tel||'';
+  document.getElementById('c-ci').value=c.cidade||'';
+  document.getElementById('c-es').value=c.estado||'';
+  document.getElementById('c-s').value=c.status||'Ativo';
+  S.clientes=S.clientes.filter(x=>x.id!==id);
+  openM('m-cli');
+}
+
+// ============================================================
+// FORNECEDORES
+// ============================================================
+function saveForn(data){
+  const nome=data?.n||document.getElementById('f-n').value.trim();
+  if(!nome&&!data){toast('Informe o nome.',false);return;}
+  S.fornecedores.push({id:Date.now()+Math.random(),nome,doc:data?.d||document.getElementById('f-d').value,categoria:data?.c||document.getElementById('f-c').value,email:data?.e||document.getElementById('f-e').value,tel:data?.t||document.getElementById('f-t').value,status:data?.s||document.getElementById('f-s').value});
+  if(!data){closeM('m-forn');toast('Fornecedor salvo!');}
+  renderForns();updateBadges();
+}
+function renderForns(){
+  const tb=document.getElementById('forn-tb');
+  if(!S.fornecedores.length){tb.innerHTML='<tr><td colspan="7"><div class="es">Nenhum fornecedor cadastrado.</div></td></tr>';return;}
+  tb.innerHTML=S.fornecedores.map(f=>`<tr>
+    <td><strong>${f.nome}</strong></td>
+    <td><code style="font-size:11px;background:var(--bg3);padding:2px 6px;border-radius:4px">${f.doc||'—'}</code></td>
+    <td><span class="badge bg-b" style="font-size:11px">${f.categoria||'—'}</span></td>
+    <td style="font-size:12px">${f.email||'—'}</td>
+    <td style="font-size:12px">${f.tel||'—'}</td>
+    <td>${sbadge(f.status||'Ativo')}</td>
+    <td><button class="btn bd bsm" onclick="delForn(${f.id})">✕</button></td>
+  </tr>`).join('');
+}
+function delForn(id){S.fornecedores=S.fornecedores.filter(f=>f.id!==id);renderForns();updateBadges();}
+
+// ============================================================
+// BANCOS
+// ============================================================
+function saveBanco(){
+  const desc=document.getElementById('bk-d').value.trim();
+  if(!desc){toast('Informe a descrição.',false);return;}
+  S.bancos.push({id:Date.now(),cod:document.getElementById('bk-c').value,desc,ag:document.getElementById('bk-a').value,conta:document.getElementById('bk-ct').value,dataSaldo:document.getElementById('bk-ds').value,saldo:parseFloat(document.getElementById('bk-s').value)||0});
+  closeM('m-banco');renderBancos();updBancoSels();toast('Banco salvo!');
+}
+function renderBancos(){
+  const tb=document.getElementById('banco-tb');
+  if(!S.bancos.length){tb.innerHTML='<tr><td colspan="7"><div class="es">Nenhum banco cadastrado.</div></td></tr>';return;}
+  tb.innerHTML=S.bancos.map(b=>`<tr>
+    <td><code style="font-size:12px;background:var(--bg3);padding:2px 6px;border-radius:4px">${b.cod||'—'}</code></td>
+    <td><strong>${b.desc}</strong></td>
+    <td>${b.ag||'—'}</td><td>${b.conta||'—'}</td>
+    <td style="color:var(--green);font-weight:600">${fmt(b.saldo)}</td>
+    <td>${b.dataSaldo||'—'}</td>
+    <td><button class="btn bd bsm" onclick="delBanco(${b.id})">✕</button></td>
+  </tr>`).join('');
+}
+function delBanco(id){S.bancos=S.bancos.filter(b=>b.id!==id);renderBancos();updBancoSels();}
+function updBancoSels(){
+  const opts='<option value="">Selecione</option>'+S.bancos.map(b=>`<option value="${b.id}">${b.desc}</option>`).join('');
+  ['l-bo','l-bd','l-bk'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=opts;});
+  const cs=document.getElementById('cb-sel');if(cs)cs.innerHTML=opts;
+}
+
+// ============================================================
+// LANÇAMENTOS
+// ============================================================
+function abrirLanc(){
+  document.getElementById('l-em').value=today();
+  document.getElementById('l-vc').value=today();
+  const sel=document.getElementById('l-ct');
+  sel.innerHTML='<option value="">Selecione a conta</option>'+S.plano.filter(c=>c.sa==='A').map(c=>`<option value="${c.id}">${c.id} — ${c.hist}</option>`).join('');
+  updBancoSels();
+  S.ltipo='receber';
+  document.querySelectorAll('#sg-lt .sgb').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.getElementById('fm-tr').style.display='none';
+  document.getElementById('fm-lc').style.display='';
+  openM('m-lanc');
+}
+function setLT(tipo,el){
+  S.ltipo=tipo;
+  document.querySelectorAll('#sg-lt .sgb').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('fm-tr').style.display=tipo==='transferencia'?'':'none';
+  document.getElementById('fm-lc').style.display=tipo==='transferencia'?'none':'';
+}
+function setSegL(tipo,el){
+  S.segL=tipo;
+  document.querySelectorAll('#seg-l .sgb').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderLancs();
+}
+function saveLanc(){
+  if(S.ltipo==='transferencia'){
+    const vo=S.bancos.find(b=>b.id==document.getElementById('l-bo').value);
+    const vd=S.bancos.find(b=>b.id==document.getElementById('l-bd').value);
+    const val=parseFloat(document.getElementById('l-tv').value)||0;
+    if(!vo||!vd||!val){toast('Preencha origem, destino e valor.',false);return;}
+    S.lancamentos.push({id:Date.now(),tipo:'transferencia',ht:document.getElementById('l-th').value||`Transf. ${vo.desc} → ${vd.desc}`,vc:document.getElementById('l-td').value,vl:val,bko:vo.desc,bkd:vd.desc,st:'baixado'});
+  } else {
+    const ht=document.getElementById('l-ht').value.trim();
+    const val=parseFloat(document.getElementById('l-vl').value)||0;
+    if(!ht||!val){toast('Preencha histórico e valor.',false);return;}
+    const bk=S.bancos.find(b=>b.id==document.getElementById('l-bk').value);
+    S.lancamentos.push({id:Date.now(),tipo:S.ltipo,ht,em:document.getElementById('l-em').value,vc:document.getElementById('l-vc').value,vl:val,ct:document.getElementById('l-ct').value,cc:document.getElementById('l-cc').value,dc:document.getElementById('l-dc').value,en:document.getElementById('l-en').value,bk:bk?.desc||'',st:document.getElementById('l-st').value});
+  }
+  closeM('m-lanc');renderLancs();updateDash();toast('Lançamento salvo!');
+}
+function renderLancs(){
+  const tb=document.getElementById('l-tb');
+  let ls=[...S.lancamentos];
+  if(S.segL!=='todos')ls=ls.filter(l=>l.tipo===S.segL);
+  const ent=S.lancamentos.filter(l=>l.tipo==='receber').reduce((s,l)=>s+l.vl,0);
+  const sai=S.lancamentos.filter(l=>l.tipo==='pagar').reduce((s,l)=>s+l.vl,0);
+  const tra=S.lancamentos.filter(l=>l.tipo==='transferencia').reduce((s,l)=>s+l.vl,0);
+  document.getElementById('l-saldo').textContent=fmt(ent-sai);
+  document.getElementById('l-ent').textContent=fmt(ent);
+  document.getElementById('l-sai').textContent=fmt(sai);
+  document.getElementById('l-tra').textContent=fmt(tra);
+  if(!ls.length){tb.innerHTML='<tr><td colspan="9"><div class="es">Nenhum lançamento. Clique em "+ Lançamento".</div></td></tr>';return;}
+  function tipoBadge(t){
+    if(t==='receber')return'<span class="badge bg-g">↑ Receber</span>';
+    if(t==='pagar')return'<span class="badge bg-r">↓ Pagar</span>';
+    return'<span class="badge bg-p">⇄ Transf.</span>';
+  }
+  tb.innerHTML=[...ls].reverse().map(l=>`<tr>
+    <td>${tipoBadge(l.tipo)}</td>
+    <td style="font-size:12px">${l.vc||'—'}</td>
+    <td><strong>${l.ht}</strong></td>
+    <td style="font-size:11px;color:var(--text3)">${l.ct||'—'}</td>
+    <td style="font-size:12px">${l.bk||l.bko||'—'}${l.bkd?' → '+l.bkd:''}</td>
+    <td style="font-size:12px">${l.dc||'—'}</td>
+    <td style="font-weight:600;color:${l.tipo==='receber'?'var(--green)':l.tipo==='pagar'?'var(--red)':'var(--purple)'}">${l.tipo==='receber'?'+':l.tipo==='pagar'?'-':'⇄'} ${fmt(l.vl)}</td>
+    <td>${sbadge(l.st)}</td>
+    <td><button class="btn bd bsm" onclick="delLanc(${l.id})">✕</button></td>
+  </tr>`).join('');
+}
+function delLanc(id){S.lancamentos=S.lancamentos.filter(l=>l.id!==id);renderLancs();updateDash();}
+
+// ============================================================
+// CONCILIAÇÃO OFX
+// ============================================================
+function hOFX(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const text=ev.target.result;
+    const txns=[];
+    const re=/\<STMTTRN\>([\s\S]*?)\<\/STMTTRN\>/g;
+    let m;
+    while((m=re.exec(text))!==null){
+      const b=m[1];
+      const g=tag=>{const r=new RegExp('<'+tag+'>([^<\n]+)');const mm=r.exec(b);return mm?mm[1].trim():'';};
+      const dt=g('DTPOSTED').substring(0,8);
+      txns.push({id:'ofx'+Date.now()+Math.random(),date:dt?`${dt.substring(0,4)}-${dt.substring(4,6)}-${dt.substring(6,8)}`:'',memo:g('MEMO')||g('NAME'),val:parseFloat(g('TRNAMT'))||0});
+    }
+    S.conciliacao=txns;
+    const saldo=txns.reduce((s,t)=>s+t.val,0);
+    document.getElementById('ce').textContent=fmt(saldo);
+    document.getElementById('cc2').textContent=txns.length;
+    renderConc();
+    toast(`${txns.length} transações importadas!`);
+  };
+  reader.readAsText(file,'latin1');
+}
+function renderConc(){
+  const tb=document.getElementById('conc-tb');
+  if(!S.conciliacao||!S.conciliacao.length){tb.innerHTML='<tr><td colspan="6"><div class="es">Importe um arquivo OFX para iniciar.</div></td></tr>';return;}
+  let conc=0,pend=0;
+  const rows=S.conciliacao.map(t=>{
+    const matched=S.lancamentos.find(l=>Math.abs(l.vl-Math.abs(t.val))<0.01&&l.vc===t.date);
+    if(matched)conc++;else pend++;
+    return`<tr style="background:${matched?'#f0fdf4':''}">
+      <td style="font-size:12px">${t.date||'—'}</td>
+      <td><strong style="font-size:13px">${t.memo||'—'}</strong></td>
+      <td style="font-weight:600;color:${t.val>=0?'var(--green)':'var(--red)'}">${fmt(t.val)}</td>
+      <td style="font-size:12px;color:var(--text2)">${matched?matched.ht:'Sem correspondência'}</td>
+      <td>${matched?sbadge('Pago'):sbadge('Pendente')}</td>
+      <td>${!matched?`<button class="btn bs bsm" onclick="criarOfx('${t.id}',${t.val},'${t.date}','${(t.memo||'').replace(/'/g,"\\'")}')">Criar Lançamento</button>`:'—'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cc3').textContent=conc;
+  document.getElementById('cc4').textContent=pend;
+  tb.innerHTML=rows;
+}
+function criarOfx(id,val,date,memo){
+  S.lancamentos.push({id:Date.now(),tipo:val>0?'receber':'pagar',ht:memo||'Importado OFX',vc:date,vl:Math.abs(val),ct:'',bk:'',st:'baixado'});
+  renderConc();updateDash();toast('Lançamento criado!');
+}
+
+// ============================================================
+// IMPORTAÇÃO XLSX
+// ============================================================
+function pf(file,tipo){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const data=XLSX.utils.sheet_to_json(ws,{defval:''});
+      if(!data.length){toast('Planilha vazia.',false);return;}
+      let count=0;
+      data.forEach(row=>{
+        const keys=Object.keys(row).map(k=>k.toLowerCase());
+        const get=(...ns)=>{for(const n of ns){const k=keys.find(k=>k.includes(n));if(k!==undefined)return String(row[Object.keys(row)[keys.indexOf(k)]]||'');}return '';};
+        if(tipo==='c')saveCli({n:get('nome','razão','razao','empresa'),d:get('cnpj','cpf','documento'),r:get('regime')||'Simples Nacional',e:get('email'),t:get('celular','telefone','tel'),ci:get('cidade'),es:get('estado'),s:get('status')||'Ativo'});
+        else saveForn({n:get('nome','razão','razao','empresa'),d:get('cnpj','documento'),c:get('categoria','cat'),e:get('email'),t:get('telefone','tel'),s:get('status')||'Ativo'});
+        count++;
+      });
+      const pid=tipo==='c'?'pv-cli':'pv-forn';
+      document.getElementById(pid).innerHTML=`<div style="background:var(--green-bg);border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;font-size:13px;color:var(--green);display:flex;align-items:center;gap:8px"><span>✓</span> <strong>${count} registros importados</strong> de "${file.name}"</div>`;
+      toast(`${count} registros importados com sucesso!`);
+    }catch(err){toast('Erro ao ler planilha. Verifique o formato.',false);}
+  };
+  reader.readAsBinaryString(file);
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+let cF=null,cR=null;
+function updateDash(){
+  document.getElementById('d-cli').textContent=S.clientes.length;
+  const ent=S.lancamentos.filter(l=>l.tipo==='receber').reduce((s,l)=>s+l.vl,0);
+  document.getElementById('d-ent').textContent=fmt(ent);
+  document.getElementById('d-rec').textContent=fmt(S.lancamentos.filter(l=>l.tipo==='receber'&&l.st==='aberto').reduce((s,l)=>s+l.vl,0));
+  document.getElementById('d-pag').textContent=fmt(S.lancamentos.filter(l=>l.tipo==='pagar'&&l.st==='aberto').reduce((s,l)=>s+l.vl,0));
+  const div=document.getElementById('d-lanc');
+  if(!S.lancamentos.length){div.innerHTML='<div class="es">Nenhum lançamento ainda. Acesse o módulo Lançamentos.</div>';return;}
+  const cor=t=>t==='receber'?'var(--green)':t==='pagar'?'var(--red)':'var(--purple)';
+  div.innerHTML=[...S.lancamentos].slice(-5).reverse().map(l=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${cor(l.tipo)};flex-shrink:0"></div>
+      <div style="flex:1"><strong style="font-size:13px">${l.ht}</strong><span style="display:block;font-size:11px;color:var(--text3)">${l.vc||''} · ${l.tipo==='receber'?'Receber':l.tipo==='pagar'?'Pagar':'Transferência'}</span></div>
+      <div style="font-weight:700;font-size:14px;color:${cor(l.tipo)}">${l.tipo==='receber'?'+':l.tipo==='pagar'?'-':'⇄'} ${fmt(l.vl)}</div>
+    </div>`).join('');
+  renderCharts();
+}
+function renderCharts(){
+  if(cF)cF.destroy();
+  const cf=document.getElementById('cF');
+  if(cf){
+    const ent=S.lancamentos.filter(l=>l.tipo==='receber').reduce((s,l)=>s+l.vl,0)||16800;
+    const sai=S.lancamentos.filter(l=>l.tipo==='pagar').reduce((s,l)=>s+l.vl,0)||10400;
+    cF=new Chart(cf,{type:'line',data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun'],datasets:[
+      {label:'Entradas',data:[12400,15800,11200,18600,14200,ent],borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.06)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#16a34a'},
+      {label:'Saídas',data:[8200,9400,7800,11200,9600,sai],borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.04)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#dc2626'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6b7280',font:{size:11}}}},scales:{x:{ticks:{color:'#9ca3af',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}},y:{ticks:{color:'#9ca3af',font:{size:10},callback:v=>'R$'+Math.round(v/1000)+'k'},grid:{color:'rgba(0,0,0,.04)'}}}}});
+  }
+  if(cR)cR.destroy();
+  const cr=document.getElementById('cR');
+  if(cr&&S.clientes.length){
+    const reg={};S.clientes.forEach(c=>{reg[c.regime||'Outro']=(reg[c.regime||'Outro']||0)+1;});
+    cR=new Chart(cr,{type:'doughnut',data:{labels:Object.keys(reg),datasets:[{data:Object.values(reg),backgroundColor:['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{color:'#6b7280',font:{size:11},padding:10}}}}});
+  }
+}
+function updateBadges(){
+  document.getElementById('bc').textContent=S.clientes.length;
+  document.getElementById('bf').textContent=S.fornecedores.length;
+}
+
+// ============================================================
+// PLANO DE CONTAS — ÁRVORE EXPANSÍVEL
+// ============================================================
+const GCOLS={'1':'#2563eb','2':'#dc2626','3':'#16a34a','4':'#d97706','5':'#0891b2','6':'#6b7280'};
+const GBGS={'1':'#eff6ff','2':'#fef2f2','3':'#f0fdf4','4':'#fffbeb','5':'#ecfeff','6':'#f9fafb'};
+let planoExp={},planoFilter='',planoGroup='all',planoView='arvore';
+
+function buildPlano(){
+  S.plano=JSON.parse(JSON.stringify(PLANO_COMPLETO));
+  const pg=document.getElementById('page-planoconta');
+  const sint=S.plano.filter(c=>c.sa==='S').length;
+  const anal=S.plano.filter(c=>c.sa==='A').length;
+  const gdata=[
+    {lbl:'1 - Ativo',key:'1',col:'#2563eb',bg:'#eff6ff'},
+    {lbl:'2 - Passivo',key:'2',col:'#dc2626',bg:'#fef2f2'},
+    {lbl:'2.3/2.4 - Patrimônio Líquido',key:'2.3',col:'#7c3aed',bg:'#f5f3ff'},
+    {lbl:'3 - Receitas',key:'3',col:'#16a34a',bg:'#f0fdf4'},
+    {lbl:'4 - Despesas',key:'4',col:'#d97706',bg:'#fffbeb'},
+    {lbl:'5 - Custos',key:'5',col:'#0891b2',bg:'#ecfeff'},
+    {lbl:'6 - Resultado',key:'6',col:'#6b7280',bg:'#f9fafb'},
+  ];
+  const gcards=gdata.map(g=>{
+    const cnt=g.key==='2.3'?S.plano.filter(c=>c.id.startsWith('2.3')||c.id.startsWith('2.4')).length:S.plano.filter(c=>c.id.startsWith(g.key+'.')).length;
+    return`<div onclick="planoGroup='${g.key}';document.getElementById('pg-sel').value='${g.key}';refreshPlano()" style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;flex:1;min-width:80px;transition:all .15s;box-shadow:var(--shadow)" onmouseover="this.style.borderColor='${g.col}';this.style.background='${g.bg}'" onmouseout="this.style.borderColor='var(--border)';this.style.background='#fff'">
+      <div style="font-size:24px;font-weight:700;color:${g.col};margin-bottom:4px">${cnt}</div>
+      <div style="font-size:11px;color:var(--text2)">${g.lbl}</div>
+    </div>`;
+  }).join('');
+
+  pg.innerHTML=`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <svg style="width:22px;height:22px;color:var(--accent)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <h2 style="font-size:22px;font-weight:700;color:var(--text)">Plano de Contas</h2>
+        </div>
+        <p style="font-size:13px;color:var(--text2)">${S.plano.length} contas cadastradas (${sint} sintéticas, ${anal} analíticas)</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="Object.assign(planoExp,Object.fromEntries(S.plano.filter(c=>c.sa==='S').map(c=>[c.id,true])));refreshPlano()" class="btn bs bsm">⬇ Expandir</button>
+        <button onclick="planoExp={};refreshPlano()" class="btn bs bsm">⬆ Recolher</button>
+        <button onclick="openM('m-plan')" class="btn bp bsm">+ Nova Conta</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">${gcards}</div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;align-items:center">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 14px;box-shadow:var(--shadow)">
+        <svg style="width:14px;height:14px;color:var(--text3);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar por nome, código ou número da conta..." style="background:none;border:none;outline:none;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;width:100%" oninput="planoFilter=this.value;planoGroup='all';document.getElementById('pg-sel').value='all';refreshPlano()">
+      </div>
+      <select id="pg-sel" onchange="planoGroup=this.value;refreshPlano()" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:13px;color:var(--text);outline:none;min-width:190px;box-shadow:var(--shadow)">
+        <option value="all">Todos os Grupos</option>
+        <option value="1">1 - Ativo</option>
+        <option value="2">2 - Passivo</option>
+        <option value="2.3">2.3/2.4 - Patrimônio Líquido</option>
+        <option value="3">3 - Receitas</option>
+        <option value="4">4 - Despesas</option>
+        <option value="5">5 - Custos</option>
+        <option value="6">6 - Resultado</option>
+      </select>
+      <div style="display:flex;background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow)">
+        <button id="pbtn-a" onclick="planoView='arvore';updPlanoBtns();refreshPlano()" style="padding:9px 16px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;font-weight:600">Árvore</button>
+        <button id="pbtn-l" onclick="planoView='lista';updPlanoBtns();refreshPlano()" style="padding:9px 16px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:13px;font-family:'Inter',sans-serif">Lista</button>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)">
+      <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg3)">
+        <span style="min-width:36px"></span>
+        <span style="min-width:130px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px">Conta</span>
+        <span style="flex:1;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px">Histórico</span>
+        <span style="min-width:88px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px">Tipo</span>
+        <span style="min-width:36px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;text-align:center">D/C</span>
+        <span style="min-width:56px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;text-align:center">Grupo</span>
+        <span style="min-width:100px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;text-align:right">Ações</span>
+      </div>
+      <div id="plano-tree" style="max-height:540px;overflow-y:auto"></div>
+    </div>`;
+  refreshPlano();
+}
+
+function updPlanoBtns(){
+  const a=document.getElementById('pbtn-a'),l=document.getElementById('pbtn-l');
+  if(!a||!l)return;
+  if(planoView==='arvore'){a.style.background='var(--accent)';a.style.color='#fff';l.style.background='transparent';l.style.color='var(--text2)';}
+  else{l.style.background='var(--accent)';l.style.color='#fff';a.style.background='transparent';a.style.color='var(--text2)';}
+}
+
+function getFiltered(){
+  let items=S.plano;
+  if(planoFilter){const q=planoFilter.toLowerCase();items=items.filter(c=>c.hist.toLowerCase().includes(q)||c.id.includes(planoFilter));}
+  if(planoGroup!=='all'){
+    if(planoGroup==='2.3')items=items.filter(c=>c.id.startsWith('2.3')||c.id.startsWith('2.4'));
+    else items=items.filter(c=>c.id.startsWith(planoGroup+'.'));
+  }
+  return items;
+}
+function countUnder(id,all){
+  const p=id.split('.');
+  return all.filter(c=>{
+    if(c.id===id)return false;
+    const cp=c.id.split('.');
+    if(cp[0]!==p[0])return false;
+    if(p[1]!=='0'&&cp[1]!==p[1])return false;
+    if(p[2]!=='00'&&cp[2]!==p[2])return false;
+    if(p[3]!=='000'&&cp[3]!==p[3])return false;
+    return true;
+  }).length;
+}
+function getChildItems(id,all){
+  const p=id.split('.');
+  if(p[1]==='0'&&p[2]==='00')return all.filter(c=>{const cp=c.id.split('.');return cp[0]===p[0]&&cp[1]!=='0'&&cp[2]==='00'&&cp[3]==='000';});
+  if(p[2]==='00')return all.filter(c=>{const cp=c.id.split('.');return cp[0]===p[0]&&cp[1]===p[1]&&cp[2]!=='00'&&cp[3]==='000';});
+  if(p[3]==='000')return all.filter(c=>{const cp=c.id.split('.');return cp[0]===p[0]&&cp[1]===p[1]&&cp[2]===p[2]&&cp[3]!=='000'&&cp[4]==='000';});
+  if(p[4]==='000')return all.filter(c=>{const cp=c.id.split('.');return cp[0]===p[0]&&cp[1]===p[1]&&cp[2]===p[2]&&cp[3]===p[3]&&cp[4]!=='000';});
+  return[];
+}
+function dispCode(id){
+  const p=id.split('.');
+  if(p[4]==='000'){if(p[3]==='000'){if(p[2]==='00')return`${p[0]}.${+p[1]}.0`;return`${p[0]}.${+p[1]}.${+p[2]}`;}return`${p[0]}.${+p[1]}.${+p[2]}.${+p[3]}`;}
+  return id;
+}
+function renderNode(c,depth,all){
+  const col=GCOLS[c.id.charAt(0)]||'#6b7280';
+  const bg=GBGS[c.id.charAt(0)]||'#f9fafb';
+  const isGrp=c.sa==='S';
+  const pl=16+depth*20;
+  const kids=countUnder(c.id,all);
+  const hasKids=isGrp&&kids>0;
+  const exp=!!planoExp[c.id];
+  const dc=dispCode(c.id);
+
+  const row=`<div style="display:flex;align-items:center;padding:8px 16px 8px ${pl}px;border-bottom:1px solid var(--border);transition:background .1s;cursor:${hasKids?'pointer':'default'};background:${isGrp&&!exp?'':'transparent'}" 
+    onmouseover="this.style.background='${isGrp?bg:'#fafbfc'}'" 
+    onmouseout="this.style.background='transparent'"
+    ${hasKids?`onclick="planoExp['${c.id}']=!planoExp['${c.id}'];refreshPlano()"`:''}>
+    <span style="width:18px;font-size:11px;color:var(--text3);flex-shrink:0;text-align:center">${hasKids?(exp?'▾':'▸'):''}</span>
+    <span style="font-size:15px;margin-right:8px;flex-shrink:0">${isGrp?'📁':'📄'}</span>
+    <span style="font-family:monospace;font-size:11px;font-weight:600;color:${col};flex-shrink:0;min-width:110px">${dc}</span>
+    <span style="flex:1;font-size:${isGrp?'13px':'13px'};font-weight:${isGrp?'600':'400'};color:${isGrp?'var(--text)':'var(--text2)'}">${c.hist}</span>
+    <span style="font-size:11px;background:${c.sa==='A'?'var(--green-bg)':'var(--accent-light)'};color:${c.sa==='A'?'var(--green)':'var(--accent)'};padding:2px 8px;border-radius:10px;min-width:76px;text-align:center;margin-right:8px">${c.sa==='A'?'Analítica':'Sintética'}</span>
+    <span style="font-size:12px;color:var(--text3);min-width:36px;text-align:center;margin-right:6px">${c.dc}</span>
+    <span style="font-size:11px;color:var(--text3);min-width:56px;text-align:center;margin-right:8px">${c.id.charAt(0)}</span>
+    <div style="display:flex;gap:4px;flex-shrink:0;min-width:100px;justify-content:flex-end" onclick="event.stopPropagation()">
+      ${hasKids?`<span style="font-size:11px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:1px 7px;border-radius:10px;margin-right:4px">${kids} contas</span>`:''}
+      <button onclick="editPlan('${c.id}')" class="btn bs bsm">✏</button>
+      <button onclick="delPlan('${c.id}')" class="btn bd bsm">✕</button>
+    </div>
+  </div>`;
+
+  let children='';
+  if(exp&&hasKids){
+    const ch=getChildItems(c.id,all);
+    children=ch.map(child=>renderNode(child,depth+1,all)).join('');
+  }
+  return row+children;
+}
+
+function refreshPlano(){
+  const tree=document.getElementById('plano-tree');
+  if(!tree)return;
+  const all=getFiltered();
+
+  if(planoView==='lista'){
+    if(!all.length){tree.innerHTML='<div class="es">Nenhuma conta encontrada.</div>';return;}
+    tree.innerHTML=all.slice(0,300).map(c=>{
+      const col=GCOLS[c.id.charAt(0)]||'#6b7280';
+      const isGrp=c.sa==='S';
+      return`<div style="display:flex;align-items:center;padding:8px 16px;border-bottom:1px solid var(--border);background:${isGrp?'var(--bg3)':'transparent'};transition:background .1s" onmouseover="this.style.background='#fafbfc'" onmouseout="this.style.background='${isGrp?'var(--bg3)':'transparent'}'">
+        <span style="font-family:monospace;font-size:11px;font-weight:600;color:${col};min-width:130px">${c.id}</span>
+        <span style="flex:1;font-size:13px;font-weight:${isGrp?'600':'400'};color:${isGrp?'var(--text)':'var(--text2)'}">${c.hist}</span>
+        <span style="font-size:11px;background:${c.sa==='A'?'var(--green-bg)':'var(--accent-light)'};color:${c.sa==='A'?'var(--green)':'var(--accent)'};padding:2px 8px;border-radius:10px;min-width:76px;text-align:center;margin-right:8px">${c.sa==='A'?'Analítica':'Sintética'}</span>
+        <span style="font-size:12px;color:var(--text3);min-width:36px;text-align:center;margin-right:6px">${c.dc}</span>
+        <span style="font-size:11px;color:var(--text3);min-width:56px;text-align:center;margin-right:8px">${c.id.charAt(0)}</span>
+        <div style="display:flex;gap:4px;min-width:80px;justify-content:flex-end">
+          <button onclick="editPlan('${c.id}')" class="btn bs bsm">✏</button>
+          <button onclick="delPlan('${c.id}')" class="btn bd bsm">✕</button>
+        </div>
+      </div>`;
+    }).join('')+(all.length>300?`<div style="padding:12px 16px;font-size:12px;color:var(--text3)">Mostrando 300 de ${all.length}. Use a busca para filtrar.</div>`:'');
+    return;
+  }
+
+  // Árvore
+  if(planoFilter||planoGroup!=='all'){
+    if(!all.length){tree.innerHTML='<div class="es">Nenhuma conta encontrada.</div>';return;}
+    tree.innerHTML=all.slice(0,200).map(c=>renderNode(c,0,all)).join('');
+    return;
+  }
+  const lvl1=all.filter(c=>{const p=c.id.split('.');return p[1]==='0'&&p[2]==='00'&&p[3]==='000'&&p[4]==='000';});
+  tree.innerHTML=lvl1.length?lvl1.map(c=>renderNode(c,0,all)).join(''):'<div class="es">Nenhuma conta.</div>';
+}
+
+function savePlan(){
+  const id=document.getElementById('p-id').value.trim();
+  const ht=document.getElementById('p-ht').value.trim();
+  if(!ht){toast('Informe a descrição da conta.',false);return;}
+  if(S.editPlanId){
+    const idx=S.plano.findIndex(c=>c.id===S.editPlanId);
+    if(idx>=0)S.plano[idx]={id:id||S.editPlanId,sa:document.getElementById('p-sa').value,hist:ht,dc:document.getElementById('p-dc').value,ts:document.getElementById('p-ts').value};
+    S.editPlanId=null;document.getElementById('m-plan-t').textContent='Nova Conta Contábil';
+  } else {
+    if(id&&S.plano.find(c=>c.id===id)){toast('Código já existe.',false);return;}
+    S.plano.push({id:id||'novo-'+Date.now(),sa:document.getElementById('p-sa').value,hist:ht,dc:document.getElementById('p-dc').value,ts:document.getElementById('p-ts').value});
+    S.plano.sort((a,b)=>a.id.localeCompare(b.id));
+  }
+  closeM('m-plan');
+  if(document.getElementById('page-planoconta').classList.contains('active'))buildPlano();
+  toast('Conta salva!');
+}
+function editPlan(id){
+  const c=S.plano.find(x=>x.id===id);if(!c)return;
+  S.editPlanId=id;
+  document.getElementById('m-plan-t').textContent='Editar Conta';
+  document.getElementById('p-id').value=c.id;
+  document.getElementById('p-sa').value=c.sa;
+  document.getElementById('p-ht').value=c.hist;
+  document.getElementById('p-dc').value=c.dc;
+  document.getElementById('p-ts').value=c.ts;
+  openM('m-plan');
+}
+function delPlan(id){
+  if(!confirm('Excluir esta conta?'))return;
+  S.plano=S.plano.filter(c=>c.id!==id);
+  if(document.getElementById('page-planoconta').classList.contains('active'))buildPlano();
+  toast('Conta removida.');
+}
+
+// ============================================================
+// FUNIL DE VENDAS
+// ============================================================
+const FV={
+  leads:[
+    {id:1,nome:'ORGANIZACAO NISSI',cliente:'ORGANIZACAO NISSI',vl:1700,tipo:'Recorrente',desc:'Atualização de Diretoria',data:'25/03/2026',etapa:'lead',dias:0},
+    {id:2,nome:'Gabriel',cliente:'Mabel Araujo Amaraal',vl:9000,tipo:'Único',desc:'Serviços de aposentadoria',data:'05/03/2026',etapa:'negociacao',dias:20,alerta:true},
+    {id:3,nome:'KAREN GONCALVES',cliente:'KAREN GONCALVES DA',vl:500,tipo:'Recorrente',desc:'Entrega de IRPF 2026',data:'24/03/2026',etapa:'contrato',dias:1},
+    {id:4,nome:'M & D DESENTUPID',cliente:'M & D DESENTUPIDORA',vl:150,tipo:'Recorrente',desc:'Compartilhamento de Faturamento',data:'25/03/2026',etapa:'ativo',dias:0},
+  ],
+  orcamentos:[
+    {id:1,num:'ORC-2026/0017',status:'Enviado',titulo:'Atualização de Diretoria e Inclusão de Atividades',vl:1700,pgto:'Boleto',data:'25/03/2026',validade:'30/03/2026',vendedor:'Paulo Cezar Nogueira'},
+    {id:2,num:'ORC-2026/0016',status:'Enviado',titulo:'Desenquadramento de Mei E Transformação em EI',vl:1500,pgto:'Boleto',data:'25/03/2026',validade:'30/03/2026',vendedor:'Ingrid'},
+  ],
+  vendas:[
+    {id:1,num:'VA-2026/0008',titulo:'Compartilhamento de Faturamento',servico:'Compartilhamento de Faturamento',lead:'M & D DESENTUPIDORA LTDA',data:'25/03/2026',vl:150,status:'Pendente'},
+    {id:2,num:'VA-2026/0007',titulo:'ENTREGA DA DIRPF 2026',servico:'IRPF Simplificada',lead:'DEBORA CRISTINA DOS SANTOS DA SILVA',data:'25/03/2026',vl:250,status:'Pendente'},
+  ],
+  contratos:[
+    {id:1,num:'CT-2026/0003',cliente:'ASSOCIAÇÃO SOLIDÁRIA CRISTO O LIBERTADOR',servico:'Prestação de Serviços Contábil',lead:'ELICIO SOARES DE CARVALHO',vencDia:13,inicio:'13/03/2026',vl:5088.08,tipo:'Mensal',status:'Ativo'},
+    {id:2,num:'CT-2026/0002',cliente:'BOMBARDELLI HOLDING E GESTAO PATRIMONIAL LTDA',servico:'Honorários Contábeis',lead:'MARCELO BOMBARDELLI RAMOS',vencDia:11,inicio:'11/03/2026',vl:300,tipo:'Mensal',status:'Ativo'},
+  ],
+  parcelas:[
+    {id:1,ref:'12/2026',parcela:'Parcela #10',contrato:'CT-2026/0003',cliente:'ASSOCIAÇÃO SOLIDÁRIA...',vl:5088.08,venc:'13/12/2026',status:'Pendente',pgto:null},
+    {id:2,ref:'03/2026',parcela:'Parcela #1',contrato:'CT-2026/0002',cliente:'BOMBARDELLI HOLDING...',vl:300,venc:'11/03/2026',status:'Pago',pgto:'11/03/2026'},
+  ],
+  tab:'kanban',oSeq:17,vSeq:8,cSeq:3,
+};
+const KCOLS=[{id:'lead',lbl:'Lead / Orçamento',col:'#2563eb'},{id:'negociacao',lbl:'Negociação',col:'#d97706'},{id:'contrato',lbl:'Contrato / Docs',col:'#7c3aed'},{id:'implantacao',lbl:'Implantação',col:'#0891b2'},{id:'ativo',lbl:'Ativo / Recebido',col:'#16a34a'}];
+
+function buildFunil(){
+  const pg=document.getElementById('page-funil');
+  pg.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div><h2 style="font-size:20px;font-weight:700;color:var(--text)">Funil de Vendas</h2><p style="font-size:13px;color:var(--text2);margin-top:2px">Gerencie leads, orçamentos e contratos do escritório</p></div>
+      <button id="funil-btn" onclick="funilNovo()" class="btn bp bsm">+ Novo Lead</button>
+    </div>
+    <div style="display:flex;gap:3px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px;margin-bottom:20px;width:fit-content">
+      <button onclick="setFTab('kanban')" id="ft-kanban" class="sgb active" style="font-size:12px;padding:6px 14px">📈 Leads</button>
+      <button onclick="setFTab('orcamentos')" id="ft-orcamentos" class="sgb" style="font-size:12px;padding:6px 14px">📋 Orçamentos</button>
+      <button onclick="setFTab('vendas')" id="ft-vendas" class="sgb" style="font-size:12px;padding:6px 14px">💲 Vendas</button>
+      <button onclick="setFTab('contratos')" id="ft-contratos" class="sgb" style="font-size:12px;padding:6px 14px">🔄 Contratos</button>
+      <button onclick="setFTab('parcelas')" id="ft-parcelas" class="sgb" style="font-size:12px;padding:6px 14px">📊 Parcelas</button>
+      <button onclick="setFTab('comissoes')" id="ft-comissoes" class="sgb" style="font-size:12px;padding:6px 14px">💰 Comissões</button>
+    </div>
+    <div id="funil-body"></div>`;
+  renderFTab();
+}
+
+function setFTab(t){
+  FV.tab=t;
+  document.querySelectorAll('[id^="ft-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ft-'+t).classList.add('active');
+  const lbls={kanban:'+ Novo Lead',orcamentos:'+ Novo Orçamento',vendas:'+ Nova Venda',contratos:'+ Novo Contrato',parcelas:'+ Gerar Parcelas',comissoes:'+ Comissão'};
+  const b=document.getElementById('funil-btn');if(b)b.textContent=lbls[t]||'+ Novo';
+  renderFTab();
+}
+function funilNovo(){
+  const m={kanban:'m-lead',orcamentos:'m-orc',vendas:'m-venda',contratos:'m-contrato'};
+  if(FV.tab==='parcelas'){gerarParcelas();return;}
+  const mid=m[FV.tab];if(mid)openM(mid);
+}
+function renderFTab(){
+  const b=document.getElementById('funil-body');if(!b)return;
+  const tabs={kanban:renderKanban,orcamentos:renderOrcs,vendas:renderVendas,contratos:renderContratos,parcelas:renderParcelas};
+  if(tabs[FV.tab])tabs[FV.tab]();
+  else b.innerHTML='<div class="es" style="padding:60px"><p style="font-size:15px;color:var(--text2)">Em desenvolvimento.</p></div>';
+}
+
+function renderKanban(){
+  const b=document.getElementById('funil-body');
+  const total=FV.leads.reduce((s,l)=>s+l.vl,0);
+  const metCards=[
+    {lbl:'Total de Leads',val:FV.leads.length,col:'var(--accent)'},
+    {lbl:'Taxa de Conversão',val:'32%',col:'#d97706'},
+    {lbl:'Tempo Médio Fechamento',val:'1 dia',col:'#d97706'},
+    {lbl:'Receita Potencial',val:'R$ '+total.toLocaleString('pt-BR',{minimumFractionDigits:2}),col:'var(--green)'},
+  ].map(m=>`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;flex:1;box-shadow:var(--shadow)"><div style="font-size:12px;color:var(--text2);margin-bottom:6px">${m.lbl}</div><div style="font-size:24px;font-weight:700;color:${m.col}">${m.val}</div></div>`).join('');
+
+  const cols=KCOLS.map(col=>{
+    const items=FV.leads.filter(l=>l.etapa===col.id);
+    const tot=items.reduce((s,l)=>s+l.vl,0);
+    const cards=items.map(l=>`<div class="kanban-card${l.alerta?' alert':''}" onclick="">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <strong style="font-size:13px;color:var(--text)">${l.nome}</strong>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">👤 ${l.cliente}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="font-weight:700;color:${col.col};font-size:14px">R$ ${l.vl.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+        <span style="background:${l.tipo==='Recorrente'?'#eff6ff':'#f5f3ff'};color:${l.tipo==='Recorrente'?'#2563eb':'#7c3aed'};font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600">${l.tipo}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${l.desc}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--text3)">${l.data}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${l.alerta?`<span style="background:var(--red-bg);color:var(--red);font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600">⚠ ${l.dias}d</span>`:``}
+          <button onclick="moverLead(${l.id})" style="background:${col.col};color:#fff;border:none;border-radius:5px;padding:3px 10px;cursor:pointer;font-size:12px;font-weight:600">→</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+    return`<div class="kanban-col">
+      <div class="kanban-header" style="background:${col.col}18;border:1px solid ${col.col}33">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:600;color:${col.col}">${col.lbl}</span>
+          <span style="background:${col.col};color:#fff;font-size:10px;font-weight:700;padding:1px 8px;border-radius:10px">${items.length}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text2)">R$ ${tot.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+      </div>
+      <div style="min-height:60px">${cards||'<div style="text-align:center;padding:20px 10px;font-size:12px;color:var(--text3);border:2px dashed var(--border);border-radius:8px">Arraste leads para cá</div>'}</div>
+    </div>`;
+  }).join('');
+
+  b.innerHTML=`<div style="display:flex;gap:12px;margin-bottom:20px">${metCards}</div><div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px">${cols}</div>`;
+}
+
+function moverLead(id){
+  const l=FV.leads.find(x=>x.id===id);if(!l)return;
+  const e=['lead','negociacao','contrato','implantacao','ativo'];
+  const i=e.indexOf(l.etapa);
+  if(i<e.length-1){
+    l.etapa=e[i+1];
+    if(l.etapa==='ativo'&&confirm(`Lead "${l.nome}" chegou ao Ativo! Gerar contrato automaticamente?`))gerarContratoLead(l);
+    renderFTab();
+  }
+}
+function gerarContratoLead(l){
+  FV.cSeq++;
+  const num=`CT-${new Date().getFullYear()}/000${FV.cSeq}`;
+  FV.contratos.push({id:Date.now(),num,cliente:l.cliente,servico:'Prestação de Serviços Contábeis',lead:l.nome,vencDia:10,inicio:new Date().toLocaleDateString('pt-BR'),vl:l.vl,tipo:'Mensal',status:'Ativo'});
+  toast(`Contrato ${num} gerado automaticamente!`);
+}
+
+function renderOrcs(){
+  const b=document.getElementById('funil-body');
+  b.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div><h3 style="font-size:18px;font-weight:700">Orçamentos</h3><p style="font-size:13px;color:var(--text2)">Crie e gerencie orçamentos para seus clientes</p></div>
+      <div style="display:flex;gap:8px"><button class="btn bs bsm">📄 Usar Modelo</button><button class="btn bp bsm" onclick="openM('m-orc')">+ Novo Orçamento</button></div>
+    </div>
+    ${FV.orcamentos.map(o=>`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;box-shadow:var(--shadow)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:12px;color:var(--text3)">${o.num}</span>${sbadge(o.status)}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px">${o.titulo}</div><div style="font-size:12px;color:var(--text2)">R$ ${o.vl.toLocaleString('pt-BR',{minimumFractionDigits:2})} · ${o.pgto} · ${o.data} · Válido até ${o.validade} · Vendedor: ${o.vendedor}</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn bs bsm">⬇</button>
+          <button class="btn bs bsm">✏</button>
+          <button class="btn bd bsm" onclick="FV.orcamentos=FV.orcamentos.filter(x=>x.id!==${o.id});renderFTab()">✕</button>
+        </div>
+      </div>
+    </div>`).join('')}`;
+}
+
+function renderVendas(){
+  const b=document.getElementById('funil-body');
+  const pend=FV.vendas.filter(v=>v.status==='Pendente').reduce((s,v)=>s+v.vl,0);
+  const rec=FV.vendas.filter(v=>v.status==='Recebido').reduce((s,v)=>s+v.vl,0);
+  b.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:26px;font-weight:700;color:var(--accent)">${FV.vendas.length}</div><div style="font-size:13px;color:var(--text2)">Total de Vendas</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:22px;font-weight:700;color:var(--amber)">R$ ${pend.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div style="font-size:13px;color:var(--text2)">Pendente</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:22px;font-weight:700;color:var(--green)">R$ ${rec.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div style="font-size:13px;color:var(--text2)">Recebido</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn bp bsm" onclick="openM('m-venda')">+ Nova Venda Avulsa</button></div>
+    ${FV.vendas.map(v=>`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)">
+      <div style="width:34px;height:34px;background:var(--accent-light);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">📋</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px"><span style="font-size:14px;font-weight:600;color:var(--text)">${v.titulo}</span>${sbadge(v.status)}</div>
+        <div style="font-size:12px;color:var(--text2)">${v.num} · ${v.servico} · ${v.lead} · ${v.data}</div>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:var(--green)">R$ ${v.vl.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+      <button class="btn bd bsm" onclick="FV.vendas=FV.vendas.filter(x=>x.id!==${v.id});renderFTab()">✕</button>
+    </div>`).join('')}`;
+}
+
+function renderContratos(){
+  const b=document.getElementById('funil-body');
+  const ativos=FV.contratos.filter(c=>c.status==='Ativo').length;
+  const rec=FV.contratos.filter(c=>c.status==='Ativo').reduce((s,c)=>s+c.vl,0);
+  b.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:26px;font-weight:700;color:var(--accent)">${FV.contratos.length}</div><div style="font-size:13px;color:var(--text2)">Total de Contratos</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:26px;font-weight:700;color:var(--green)">${ativos}</div><div style="font-size:13px;color:var(--text2)">Contratos Ativos</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:20px;font-weight:700;color:var(--purple)">R$ ${rec.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div style="font-size:13px;color:var(--text2)">Receita Mensal Recorrente</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn bp bsm" onclick="openM('m-contrato')">+ Novo Contrato</button></div>
+    ${FV.contratos.map(c=>`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)">
+      <div style="width:34px;height:34px;background:var(--purple-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">📑</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px"><span style="font-size:14px;font-weight:600;color:var(--text)">Contrato - ${c.cliente}</span>${sbadge(c.status)}<span class="badge bg-b" style="font-size:11px">${c.tipo}</span></div>
+        <div style="font-size:12px;color:var(--text2)">${c.num} · ${c.servico} · Venc. dia ${c.vencDia} · Início: ${c.inicio}</div>
+      </div>
+      <div style="font-size:15px;font-weight:700;color:var(--purple);white-space:nowrap">R$ ${c.vl.toLocaleString('pt-BR',{minimumFractionDigits:2})}/mês</div>
+      <button class="btn bd bsm" onclick="FV.contratos=FV.contratos.filter(x=>x.id!==${c.id});renderFTab()">✕</button>
+    </div>`).join('')}`;
+}
+
+function renderParcelas(){
+  const b=document.getElementById('funil-body');
+  const pend=FV.parcelas.filter(p=>p.status==='Pendente');
+  const pagas=FV.parcelas.filter(p=>p.status==='Pago');
+  const atras=FV.parcelas.filter(p=>p.status==='Atrasado');
+  b.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+      <div style="background:#fff;border:2px solid #fde68a;border-radius:10px;padding:16px;box-shadow:var(--shadow)"><div style="font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;margin-bottom:6px">Pendentes</div><div style="font-size:24px;font-weight:700;color:var(--amber)">${pend.length}</div><div style="font-size:12px;color:var(--amber)">R$ ${pend.reduce((s,p)=>s+p.vl,0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div>
+      <div style="background:#fff;border:2px solid #bbf7d0;border-radius:10px;padding:16px;box-shadow:var(--shadow)"><div style="font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;margin-bottom:6px">Pagas</div><div style="font-size:24px;font-weight:700;color:var(--green)">${pagas.length}</div><div style="font-size:12px;color:var(--green)">R$ ${pagas.reduce((s,p)=>s+p.vl,0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div>
+      <div style="background:#fff;border:2px solid #fecaca;border-radius:10px;padding:16px;box-shadow:var(--shadow)"><div style="font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;margin-bottom:6px">Atrasadas</div><div style="font-size:24px;font-weight:700;color:var(--red)">${atras.length}</div><div style="font-size:12px;color:var(--red)">R$ ${atras.reduce((s,p)=>s+p.vl,0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div>
+      <div style="background:#fff;border:2px solid #bfdbfe;border-radius:10px;padding:16px;box-shadow:var(--shadow)"><div style="font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;margin-bottom:6px">Total Recebido</div><div style="font-size:20px;font-weight:700;color:var(--accent)">R$ ${pagas.reduce((s,p)=>s+p.vl,0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div style="font-size:12px;color:var(--text2)">${pagas.length} parcela(s)</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn bp bsm" onclick="gerarParcelas()">+ Gerar Parcelas</button></div>
+    <div class="tc"><table><thead><tr><th>Ref.</th><th>Contrato</th><th>Cliente</th><th>Valor</th><th>Vencimento</th><th>Status</th><th>Pagamento</th><th>Ações</th></tr></thead>
+    <tbody>${FV.parcelas.map(p=>`<tr>
+      <td><strong>${p.ref}</strong><br><span style="font-size:11px;color:var(--text3)">${p.parcela}</span></td>
+      <td style="font-size:12px">${p.contrato}</td><td style="font-size:12px">${p.cliente}</td>
+      <td style="font-weight:600">R$ ${p.vl.toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+      <td style="font-size:12px">${p.venc}</td>
+      <td>${sbadge(p.status)}</td>
+      <td style="font-size:12px">${p.pgto||'—'}</td>
+      <td><button class="btn bg2 bsm" onclick="baixarParcela(${p.id})">✓ Pagar</button></td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+function gerarParcelas(){
+  if(!FV.contratos.length){toast('Cadastre contratos primeiro.',false);return;}
+  FV.contratos.forEach(c=>{
+    for(let i=1;i<=3;i++){
+      const d=new Date();d.setMonth(d.getMonth()+i);
+      FV.parcelas.push({id:Date.now()+Math.random(),ref:`${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`,parcela:`Parcela #${FV.parcelas.length+1}`,contrato:c.num,cliente:c.cliente.substring(0,22)+'...',vl:c.vl,venc:`${c.vencDia}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`,status:'Pendente',pgto:null});
+    }
+  });
+  renderFTab();toast('Parcelas geradas com sucesso!');
+}
+function baixarParcela(id){const p=FV.parcelas.find(x=>x.id===id);if(p){p.status='Pago';p.pgto=new Date().toLocaleDateString('pt-BR');}renderFTab();toast('Parcela baixada!');}
+
+// Salvar funil items
+function saveLead(){FV.leads.push({id:Date.now(),nome:document.getElementById('ml-n').value,cliente:document.getElementById('ml-c').value,vl:parseFloat(document.getElementById('ml-v').value)||0,tipo:document.getElementById('ml-t').value,desc:document.getElementById('ml-d').value,data:new Date().toLocaleDateString('pt-BR'),etapa:'lead',dias:0});closeM('m-lead');renderFTab();toast('Lead salvo!');}
+function saveOrc(){FV.oSeq++;FV.orcamentos.unshift({id:Date.now(),num:`ORC-${new Date().getFullYear()}/00${FV.oSeq}`,status:'Rascunho',titulo:document.getElementById('mo-t').value,vl:parseFloat(document.getElementById('mo-v').value)||0,pgto:document.getElementById('mo-p').value,data:new Date().toLocaleDateString('pt-BR'),validade:document.getElementById('mo-vl').value,vendedor:document.getElementById('mo-vd').value});closeM('m-orc');renderFTab();toast('Orçamento salvo!');}
+function saveContrato(){FV.cSeq++;FV.contratos.push({id:Date.now(),num:`CT-${new Date().getFullYear()}/000${FV.cSeq}`,cliente:document.getElementById('mc-c').value,servico:document.getElementById('mc-s').value,lead:document.getElementById('mc-l').value,vencDia:parseInt(document.getElementById('mc-d').value)||10,inicio:document.getElementById('mc-i').value,vl:parseFloat(document.getElementById('mc-v').value)||0,tipo:document.getElementById('mc-tp').value,status:document.getElementById('mc-st').value});closeM('m-contrato');renderFTab();toast('Contrato salvo!');}
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload=function(){
+  // Carregar plano de contas
+  S.plano=JSON.parse(JSON.stringify(PLANO_COMPLETO));
+
+  // Clientes pré-carregados da planilha
+  [
+    {n:'MARIANA MAYARA FREITAS SANTOS LTDA',d:'42.321.900/0001-80',r:'Simples Nacional',e:'leoathanasioimoveis@gmail.com',t:'(11) 97715-8528',ci:'Santana de Parnaíba',es:'SP',s:'Ativo'},
+    {n:'BOMBARDELLI HOLDING E GESTAO PATRIMONIAL LTDA',d:'64.253.949/0001-86',r:'Lucro Presumido',e:'',t:'(11) 97675-4912',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'ALINE SILVA DE ALMEIDA',d:'489.284.660/0018-8',r:'MEI',e:'ocmenezes@icloud.com',t:'(15) 99761-3080',ci:'Ibiúna',es:'SP',s:'Ativo'},
+    {n:'SIELSON XAVIER TRANSPORTES LTDA',d:'64.530.448/0001-08',r:'Simples Nacional',e:'lurickymodas@hotmail.com',t:'(11) 96774-8580',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'LISA MODAS MARTINS COMERCIO LTDA',d:'65.025.820/0001-83',r:'Simples Nacional',e:'lisandra.martins@hotmail.com',t:'(11) 93244-6284',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'PROOF INTELLIGENCE LTDA',d:'64.350.220/0001-28',r:'Lucro Presumido',e:'tronamedanilo@gmail.com',t:'(11) 95861-5511',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'MINISTERIO PROFETICO GERACAO DE ADORADORES',d:'09.656.447/0001-98',r:'Simples Nacional',e:'juridico@nogueiraorgcontabil.com',t:'(11) 95795-1019',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'EBDA TANACA LTDA',d:'52.806.911/0001-04',r:'Simples Nacional',e:'contato@ocana.com.br',t:'(11) 97383-1697',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'CIA DOS CONGELADOS VILA NOVA CACHOEIRINHA LTDA',d:'46.524.004/0001-70',r:'Simples Nacional',e:'',t:'',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'CENTRO DE ESTUDOS FISCAIS LTDA',d:'20.799.537/0001-70',r:'Lucro Presumido',e:'',t:'',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'FACULDADE HUB LTDA',d:'49.523.759/0001-48',r:'Lucro Real',e:'',t:'',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'WILDER VILLARROEL JAIMES',d:'234.848.448-09',r:'Pessoa Física',e:'',t:'',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'ANDREIAFERRAZ LEMOS',d:'285.436.578-06',r:'Pessoa Física',e:'andreiaferrazlemos@yahoo.com.br',t:'(11) 94781-9220',ci:'São Paulo',es:'SP',s:'Ativo'},
+    {n:'LUCIANO LUNA',d:'12.302.666/0001-83',r:'Simples Nacional',e:'lucianoluna2@gmail.com',t:'(11) 94012-0618',ci:'São Paulo',es:'SP',s:'Ativo'},
+  ].forEach(c=>saveCli(c));
+
+  S.conciliacao=[];
+  updateBadges();
+  setTimeout(renderCharts,300);
+};
+</script>
+</body>
+</html>
