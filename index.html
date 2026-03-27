@@ -200,6 +200,7 @@ td strong{color:var(--text);font-weight:500}
   <div class="nav-item" onclick="go('bancos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Bancos</div>
   <div class="nav-item" onclick="go('conciliacao',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Conciliação Bancária</div>
   <div class="nav-item" onclick="go('planoconta',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Plano de Contas</div>
+  <div class="nav-item" onclick="go('honorarios',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Honorários Recorrentes</div>
   <div class="nav-sec">Comercial</div>
   <div class="nav-item" onclick="go('funil',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Funil de Vendas</div>
   <div class="nav-item" onclick="go('relatorios',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>Relatórios</div>
@@ -370,6 +371,9 @@ td strong{color:var(--text);font-weight:500}
 <!-- FUNIL DE VENDAS -->
 <div class="page" id="page-funil"></div>
 
+<!-- HONORÁRIOS RECORRENTES -->
+<div class="page" id="page-honorarios"></div>
+
 <!-- OUTROS -->
 <div class="page" id="page-relatorios"><div class="es" style="padding:80px"><svg style="width:48px;height:48px;color:#d1d5db;margin:0 auto 16px;display:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg><p style="font-size:15px;color:#6b7280">Relatórios — Em desenvolvimento</p></div></div>
 <div class="page" id="page-radar"><div class="es" style="padding:80px"><p style="font-size:15px;color:#6b7280">Radar Fiscal — Em desenvolvimento</p></div></div>
@@ -490,6 +494,43 @@ td strong{color:var(--text);font-weight:500}
 </div></div>
 
 <!-- Modais Funil -->
+<div class="mo" id="m-contrato-rec"><div class="md mdl">
+  <div class="mh"><h2 id="m-contrato-t">Novo Contrato Recorrente</h2><div class="mc2" onclick="closeM('m-contrato-rec')">×</div></div>
+  <div class="fg">
+    <div class="ff"><label>Cliente *</label>
+      <input id="hr-cli" type="text" placeholder="Nome do cliente" list="hr-cli-list">
+      <datalist id="hr-cli-list"></datalist>
+    </div>
+    <div><label>Valor Mensal (R$) *</label><input id="hr-vl" type="number" step="0.01" placeholder="0,00"></div>
+    <div><label>Dia de Vencimento *</label><input id="hr-dia" type="number" min="1" max="31" placeholder="Ex: 10"></div>
+    <div><label>Data de Início</label><input id="hr-ini" type="date"></div>
+    <div><label>Tipo de Serviço</label>
+      <select id="hr-tipo">
+        <option>Contabilidade Geral</option>
+        <option>Simples Nacional</option>
+        <option>Lucro Presumido</option>
+        <option>Lucro Real</option>
+        <option>MEI</option>
+        <option>Fiscal</option>
+        <option>Departamento Pessoal</option>
+        <option>Consultoria</option>
+        <option>Outros</option>
+      </select>
+    </div>
+    <div><label>Status</label>
+      <select id="hr-st">
+        <option value="ativo">Ativo</option>
+        <option value="suspenso">Suspenso</option>
+        <option value="cancelado">Cancelado</option>
+      </select>
+    </div>
+    <div class="ff"><label>Observações</label><input id="hr-obs" type="text" placeholder="Observações do contrato"></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <button class="btn bs" onclick="closeM('m-contrato-rec')">Cancelar</button>
+    <button class="btn bp" onclick="saveContrato()">Salvar Contrato</button>
+  </div>
+</div></div>
 <div class="mo" id="m-lead"><div class="md">
   <div class="mh"><h2>Novo Lead</h2><div class="mc2" onclick="closeM('m-lead')">×</div></div>
   <div class="fg">
@@ -1292,6 +1333,7 @@ function go(page,el){
   else if(page==='bancos')ta.innerHTML='<button class="btn bp bsm" onclick="openM(\'m-banco\')">+ Novo Banco</button>';
   else if(page==='planoconta')ta.innerHTML='<button class="btn bp bsm" onclick="openM(\'m-plan\')">+ Nova Conta</button>';
   else if(page==='funil')ta.innerHTML='<button class="btn bp bsm" id="funil-add-btn" onclick="funilNovo()">+ Novo Lead</button>';
+  else if(page==='honorarios')ta.innerHTML='<button class="btn bp bsm" onclick="abrirNovoContrato()">+ Novo Contrato</button>';
   // init
   if(page==='lancamentos')renderLancs();
   if(page==='bancos')renderBancos();
@@ -1299,6 +1341,7 @@ function go(page,el){
   if(page==='conciliacao')renderConc();
   if(page==='planoconta')buildPlano();
   if(page==='funil')buildFunil();
+  if(page==='honorarios')buildHonorarios();
 }
 
 function stab(el,target){
@@ -2164,6 +2207,251 @@ function saveLead(){FV.leads.push({id:Date.now(),nome:document.getElementById('m
 function saveOrc(){FV.oSeq++;FV.orcamentos.unshift({id:Date.now(),num:`ORC-${new Date().getFullYear()}/00${FV.oSeq}`,status:'Rascunho',titulo:document.getElementById('mo-t').value,vl:parseFloat(document.getElementById('mo-v').value)||0,pgto:document.getElementById('mo-p').value,data:new Date().toLocaleDateString('pt-BR'),validade:document.getElementById('mo-vl').value,vendedor:document.getElementById('mo-vd').value});closeM('m-orc');renderFTab();toast('Orçamento salvo!');}
 function saveContrato(){FV.cSeq++;FV.contratos.push({id:Date.now(),num:`CT-${new Date().getFullYear()}/000${FV.cSeq}`,cliente:document.getElementById('mc-c').value,servico:document.getElementById('mc-s').value,lead:document.getElementById('mc-l').value,vencDia:parseInt(document.getElementById('mc-d').value)||10,inicio:document.getElementById('mc-i').value,vl:parseFloat(document.getElementById('mc-v').value)||0,tipo:document.getElementById('mc-tp').value,status:document.getElementById('mc-st').value});closeM('m-contrato');renderFTab();toast('Contrato salvo!');}
 
+
+// ============================================================
+// HONORÁRIOS RECORRENTES
+// ============================================================
+function buildHonorarios(){
+  const pg = document.getElementById('page-honorarios');
+  const contratos = S.contratos_rec || [];
+  const ativos = contratos.filter(c=>c.st==='ativo');
+  const totalMensal = ativos.reduce((s,c)=>s+(c.vl||0),0);
+
+  // Agrupa por dia de vencimento
+  const porDia = {};
+  ativos.forEach(c=>{
+    const dia = c.dia||1;
+    if(!porDia[dia]) porDia[dia]={dia,contratos:[],total:0};
+    porDia[dia].contratos.push(c);
+    porDia[dia].total += c.vl||0;
+  });
+  const diasOrdenados = Object.values(porDia).sort((a,b)=>b.total-a.total);
+  const diasTodos = Object.values(porDia).sort((a,b)=>a.dia-b.dia);
+  const diasCount = diasOrdenados.length;
+
+  // Dia mais forte
+  const diaForte = diasOrdenados[0]||{dia:'-',contratos:[],total:0};
+  // Top 3 dias
+  const top3 = diasOrdenados.slice(0,3);
+  const top3Total = top3.reduce((s,d)=>s+d.total,0);
+  const top3Pct = totalMensal>0?Math.round(top3Total/totalMensal*100):0;
+  // Concentração do dia mais forte
+  const concPct = totalMensal>0?Math.round(diaForte.total/totalMensal*100):0;
+
+  // Atualiza datalist de clientes no modal
+  const dl = document.getElementById('hr-cli-list');
+  if(dl) dl.innerHTML = S.clientes.map(c=>`<option value="${c.nome}">`).join('');
+
+  pg.innerHTML = `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;background:var(--al);border-radius:8px;display:flex;align-items:center;justify-content:center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      </div>
+      <h2 style="font-size:20px;font-weight:700">Honorários Recorrentes</h2>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn bs" onclick="gerarHonorarios()" style="display:flex;align-items:center;gap:6px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+        Gerar Honorários
+      </button>
+      <button class="btn bp" onclick="abrirNovoContrato()" style="display:flex;align-items:center;gap:6px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Novo Contrato
+      </button>
+    </div>
+  </div>
+
+  <!-- Cards principais -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px 28px;box-shadow:var(--sh)">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">CONTRATOS ATIVOS</div>
+      <div style="font-size:42px;font-weight:700;color:var(--text);line-height:1">${ativos.length}</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px 28px;box-shadow:var(--sh)">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">RECEITA MENSAL RECORRENTE</div>
+      <div style="font-size:36px;font-weight:700;color:var(--green);line-height:1">${fmt(totalMensal)}</div>
+    </div>
+  </div>
+
+  <!-- Seção Honorários por Dia de Vencimento -->
+  <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 24px;box-shadow:var(--sh);margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        <span style="font-size:14px;font-weight:600">Honorários por Dia de Vencimento</span>
+      </div>
+      <span style="font-size:12px;color:var(--text3)">${diasCount} dia(s) de vencimento</span>
+    </div>
+
+    <!-- 3 cards de resumo -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+      <!-- Dia mais forte -->
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 18px;position:relative;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:10px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.8px">DIA MAIS FORTE</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+        </div>
+        <div style="font-size:22px;font-weight:700;color:#15803d">Dia ${diaForte.dia}</div>
+        <div style="font-size:12px;color:#166534;margin-top:3px">${fmt(diaForte.total)} (${diaForte.contratos.length} contratos)</div>
+      </div>
+      <!-- Concentração -->
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:10px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:.8px">CONCENTRAÇÃO</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div style="font-size:36px;font-weight:700;color:#1d4ed8;line-height:1">${concPct}%</div>
+        <div style="font-size:12px;color:#1e40af;margin-top:3px">do total no dia ${diaForte.dia}</div>
+      </div>
+      <!-- Top 3 dias -->
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:10px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.8px">TOP 3 DIAS</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          ${top3.map((d,i)=>`<span style="background:${i===0?'#f59e0b':'#fff'};color:${i===0?'#fff':'#92400e'};border:1px solid #fde68a;border-radius:20px;font-size:11px;font-weight:700;padding:2px 10px">Dia ${d.dia}</span>`).join('')}
+        </div>
+        <div style="font-size:12px;color:#92400e">${fmt(top3Total)} (${top3Pct}%)</div>
+      </div>
+    </div>
+
+    <!-- Lista de dias com barras -->
+    <div style="display:flex;flex-direction:column;gap:0">
+      ${diasTodos.length===0?`<div class="es">Nenhum contrato cadastrado ainda.</div>`:
+      diasTodos.map(d=>{
+        const pct = totalMensal>0?Math.round(d.total/totalMensal*100):0;
+        const isDiaForte = d.dia===diaForte.dia;
+        return`<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+          <div style="width:36px;height:36px;border-radius:8px;background:${isDiaForte?'var(--accent)':'var(--bg3)'};color:${isDiaForte?'#fff':'var(--text2)'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${d.dia}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:12px;color:var(--text2)">${d.contratos.length} contrato${d.contratos.length>1?'s':''}</span>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:13px;font-weight:700;color:var(--text)">${fmt(d.total)}</span>
+                <span style="font-size:12px;color:var(--text3);min-width:32px;text-align:right">${pct}%</span>
+              </div>
+            </div>
+            <div style="height:6px;background:var(--bg3);border-radius:99px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:${isDiaForte?'var(--accent)':'#94a3b8'};border-radius:99px;transition:width .4s"></div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <!-- Lista de contratos -->
+  <div class="tc">
+    <div class="th">
+      <h3>Contratos Cadastrados</h3>
+      <div class="sb">
+        <svg style="width:13px;height:13px;color:#9ca3af;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar cliente..." oninput="ft('hr-tb',this.value)">
+      </div>
+    </div>
+    <table><thead><tr>
+      <th>Cliente</th><th>Tipo de Serviço</th><th>Dia Vcto</th><th>Valor Mensal</th><th>Início</th><th>Status</th><th>Ações</th>
+    </tr></thead>
+    <tbody id="hr-tb">
+      ${contratos.length===0?`<tr><td colspan="7"><div class="es">Nenhum contrato. Clique em "+ Novo Contrato".</div></td></tr>`:
+      contratos.map(c=>`<tr>
+        <td><strong>${c.cli}</strong></td>
+        <td><span class="badge bg-b" style="font-size:11px">${c.tipo||'—'}</span></td>
+        <td style="text-align:center"><div style="width:32px;height:32px;border-radius:6px;background:var(--al);color:var(--accent);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center">${c.dia}</div></td>
+        <td style="font-weight:600;color:var(--green)">${fmt(c.vl)}</td>
+        <td style="font-size:12px">${c.ini||'—'}</td>
+        <td>${sbadge(c.st==='ativo'?'Ativo':c.st==='suspenso'?'Suspenso':'Inativo')}</td>
+        <td>
+          <button class="btn bs bsm" onclick="editContrato(${c.id})">✏</button>
+          <button class="btn bd bsm" onclick="delContrato(${c.id})">✕</button>
+        </td>
+      </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+function abrirNovoContrato(){
+  S._editContratoId = null;
+  document.getElementById('m-contrato-t').textContent = 'Novo Contrato Recorrente';
+  document.getElementById('hr-cli').value='';
+  document.getElementById('hr-vl').value='';
+  document.getElementById('hr-dia').value='';
+  document.getElementById('hr-ini').value='';
+  document.getElementById('hr-tipo').value='Contabilidade Geral';
+  document.getElementById('hr-st').value='ativo';
+  document.getElementById('hr-obs').value='';
+  openM('m-contrato-rec');
+}
+
+function saveContrato(){
+  const cli = document.getElementById('hr-cli').value.trim();
+  const vl  = parseFloat(document.getElementById('hr-vl').value)||0;
+  const dia = parseInt(document.getElementById('hr-dia').value)||1;
+  if(!cli||!vl){toast('Informe o cliente e o valor.',false);return;}
+  if(!S.contratos_rec) S.contratos_rec=[];
+  if(S._editContratoId){
+    const idx=S.contratos_rec.findIndex(c=>c.id===S._editContratoId);
+    if(idx>=0) S.contratos_rec[idx]={...S.contratos_rec[idx],cli,vl,dia,ini:document.getElementById('hr-ini').value,tipo:document.getElementById('hr-tipo').value,st:document.getElementById('hr-st').value,obs:document.getElementById('hr-obs').value};
+    S._editContratoId=null;
+    toast('Contrato atualizado!');
+  } else {
+    S.contratos_rec.push({id:Date.now(),cli,vl,dia,ini:document.getElementById('hr-ini').value,tipo:document.getElementById('hr-tipo').value,st:document.getElementById('hr-st').value,obs:document.getElementById('hr-obs').value});
+    toast('Contrato salvo!');
+  }
+  closeM('m-contrato-rec');
+  dbSalvar('contratos_rec', S.contratos_rec);
+  buildHonorarios();
+}
+
+function editContrato(id){
+  if(!S.contratos_rec) return;
+  const c=S.contratos_rec.find(x=>x.id===id);if(!c)return;
+  S._editContratoId=id;
+  document.getElementById('m-contrato-t').textContent='Editar Contrato Recorrente';
+  document.getElementById('hr-cli').value=c.cli||'';
+  document.getElementById('hr-vl').value=c.vl||'';
+  document.getElementById('hr-dia').value=c.dia||'';
+  document.getElementById('hr-ini').value=c.ini||'';
+  document.getElementById('hr-tipo').value=c.tipo||'Contabilidade Geral';
+  document.getElementById('hr-st').value=c.st||'ativo';
+  document.getElementById('hr-obs').value=c.obs||'';
+  openM('m-contrato-rec');
+}
+
+function delContrato(id){
+  if(!confirm('Excluir este contrato?'))return;
+  S.contratos_rec=S.contratos_rec.filter(c=>c.id!==id);
+  dbSalvar('contratos_rec', S.contratos_rec);
+  buildHonorarios();
+  toast('Contrato removido.');
+}
+
+function gerarHonorarios(){
+  if(!S.contratos_rec||!S.contratos_rec.length){toast('Nenhum contrato para gerar.',false);return;}
+  const ativos=S.contratos_rec.filter(c=>c.st==='ativo');
+  if(!ativos.length){toast('Nenhum contrato ativo.',false);return;}
+  const mes=new Date().toISOString().substring(0,7);
+  let gerados=0;
+  ativos.forEach(c=>{
+    const jaExiste=S.lancamentos.find(l=>l.ht&&l.ht.includes(c.cli)&&l.vc&&l.vc.startsWith(mes));
+    if(!jaExiste){
+      const ano=new Date().getFullYear();
+      const mesAtual=new Date().getMonth()+1;
+      const vc=`${ano}-${String(mesAtual).padStart(2,'0')}-${String(c.dia).padStart(2,'0')}`;
+      S.lancamentos.push({id:Date.now()+Math.random(),tipo:'receber',ht:`Honorários — ${c.cli}`,vc,vl:c.vl,ct:'',st:'aberto',en:c.cli});
+      gerados++;
+    }
+  });
+  if(gerados>0){
+    salvarTudo();
+    toast(`${gerados} honorário(s) gerado(s) em Lançamentos!`);
+  } else {
+    toast('Honorários já foram gerados este mês!',false);
+  }
+}
+
 // ============================================================
 // INIT
 // ============================================================
@@ -2243,16 +2531,18 @@ async function salvarTudo(){
 async function carregarTudo(){
   setSyncCarregando();
   try {
-    const [clis, forns, lancs, banks] = await Promise.all([
+    const [clis, forns, lancs, banks, contratos] = await Promise.all([
       dbCarregar('clientes'),
       dbCarregar('fornecedores'),
       dbCarregar('lancamentos'),
       dbCarregar('bancos'),
+      dbCarregar('contratos_rec'),
     ]);
     if(clis && clis.length > 0){ S.clientes = clis; }
     if(forns && forns.length > 0){ S.fornecedores = forns; }
     if(lancs && lancs.length > 0){ S.lancamentos = lancs; }
     if(banks && banks.length > 0){ S.bancos = banks; }
+    if(contratos && contratos.length > 0){ S.contratos_rec = contratos; }
     setSyncOK();
     return true;
   } catch(e){
