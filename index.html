@@ -182,6 +182,7 @@ td strong{color:var(--text);font-weight:500}
 .kanban-card:hover{box-shadow:var(--shadow-md)}
 .kanban-card.alert{border-color:#fca5a5}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <!-- SIDEBAR -->
@@ -215,6 +216,7 @@ td strong{color:var(--text);font-weight:500}
 <div class="main">
   <div class="topbar">
     <div><h1 id="pt">Dashboard</h1><p id="ps">Visão geral do escritório</p></div>
+    <div id="sync-status" style="font-size:12px;color:#16a34a">● Carregando...</div>
     <div class="ta" id="ta"></div>
   </div>
   <div class="content">
@@ -1330,7 +1332,7 @@ function saveCli(data){
     estado:data?.es||document.getElementById('c-es').value,
     status:data?.s||document.getElementById('c-s').value,
   });
-  if(!data){closeM('m-cli');document.getElementById('c-n').value='';toast('Cliente salvo com sucesso!');}
+  if(!data){closeM('m-cli');document.getElementById('c-n').value='';toast('Cliente salvo com sucesso!');salvarTudo();}
   renderClis();updateBadges();
 }
 function renderClis(){
@@ -1350,7 +1352,7 @@ function renderClis(){
     </td>
   </tr>`).join('');
 }
-function delCli(id){if(!confirm('Excluir este cliente?'))return;S.clientes=S.clientes.filter(c=>c.id!==id);renderClis();updateBadges();toast('Cliente removido.');}
+function delCli(id){if(!confirm('Excluir este cliente?'))return;S.clientes=S.clientes.filter(c=>c.id!==id);renderClis();updateBadges();toast('Cliente removido.');salvarTudo();}
 function editCli(id){
   const c=S.clientes.find(x=>x.id===id);if(!c)return;
   document.getElementById('c-n').value=c.nome;
@@ -1372,7 +1374,7 @@ function saveForn(data){
   const nome=data?.n||document.getElementById('f-n').value.trim();
   if(!nome&&!data){toast('Informe o nome.',false);return;}
   S.fornecedores.push({id:Date.now()+Math.random(),nome,doc:data?.d||document.getElementById('f-d').value,categoria:data?.c||document.getElementById('f-c').value,email:data?.e||document.getElementById('f-e').value,tel:data?.t||document.getElementById('f-t').value,status:data?.s||document.getElementById('f-s').value});
-  if(!data){closeM('m-forn');toast('Fornecedor salvo!');}
+  if(!data){closeM('m-forn');toast('Fornecedor salvo!');salvarTudo();}
   renderForns();updateBadges();
 }
 function renderForns(){
@@ -1388,7 +1390,7 @@ function renderForns(){
     <td><button class="btn bd bsm" onclick="delForn(${f.id})">✕</button></td>
   </tr>`).join('');
 }
-function delForn(id){S.fornecedores=S.fornecedores.filter(f=>f.id!==id);renderForns();updateBadges();}
+function delForn(id){S.fornecedores=S.fornecedores.filter(f=>f.id!==id);renderForns();updateBadges();salvarTudo();}
 
 // ============================================================
 // BANCOS
@@ -1396,8 +1398,18 @@ function delForn(id){S.fornecedores=S.fornecedores.filter(f=>f.id!==id);renderFo
 function saveBanco(){
   const desc=document.getElementById('bk-d').value.trim();
   if(!desc){toast('Informe a descrição.',false);return;}
-  S.bancos.push({id:Date.now(),cod:document.getElementById('bk-c').value,desc,ag:document.getElementById('bk-a').value,conta:document.getElementById('bk-ct').value,dataSaldo:document.getElementById('bk-ds').value,saldo:parseFloat(document.getElementById('bk-s').value)||0});
-  closeM('m-banco');renderBancos();updBancoSels();toast('Banco salvo!');
+  const dados={cod:document.getElementById('bk-c').value,desc,ag:document.getElementById('bk-a').value,conta:document.getElementById('bk-ct').value,dataSaldo:document.getElementById('bk-ds').value,saldo:parseFloat(document.getElementById('bk-s').value)||0};
+  if(S._editBancoId){
+    const idx=S.bancos.findIndex(b=>b.id===S._editBancoId);
+    if(idx>=0)S.bancos[idx]={...S.bancos[idx],...dados};
+    S._editBancoId=null;
+    document.querySelector('#m-banco .mh h2').textContent='Cadastro de Banco';
+    toast('Banco atualizado!');salvarTudo();
+  } else {
+    S.bancos.push({id:Date.now(),...dados});
+    toast('Banco salvo!');salvarTudo();
+  }
+  closeM('m-banco');renderBancos();updBancoSels();
 }
 function renderBancos(){
   const tb=document.getElementById('banco-tb');
@@ -1408,10 +1420,25 @@ function renderBancos(){
     <td>${b.ag||'—'}</td><td>${b.conta||'—'}</td>
     <td style="color:var(--green);font-weight:600">${fmt(b.saldo)}</td>
     <td>${b.dataSaldo||'—'}</td>
-    <td><button class="btn bd bsm" onclick="delBanco(${b.id})">✕</button></td>
+    <td>
+      <button class="btn bs bsm" onclick="editBanco(${b.id})">✏</button>
+      <button class="btn bd bsm" onclick="delBanco(${b.id})">✕</button>
+    </td>
   </tr>`).join('');
 }
-function delBanco(id){S.bancos=S.bancos.filter(b=>b.id!==id);renderBancos();updBancoSels();}
+function delBanco(id){if(!confirm('Excluir este banco?'))return;S.bancos=S.bancos.filter(b=>b.id!==id);renderBancos();updBancoSels();toast('Banco removido.');salvarTudo();}
+function editBanco(id){
+  const b=S.bancos.find(x=>x.id===id);if(!b)return;
+  document.getElementById('bk-c').value=b.cod||'';
+  document.getElementById('bk-d').value=b.desc||'';
+  document.getElementById('bk-a').value=b.ag||'';
+  document.getElementById('bk-ct').value=b.conta||'';
+  document.getElementById('bk-ds').value=b.dataSaldo||'';
+  document.getElementById('bk-s').value=b.saldo||0;
+  S._editBancoId=id;
+  document.querySelector('#m-banco .mh h2').textContent='Editar Banco';
+  openM('m-banco');
+}
 function updBancoSels(){
   const opts='<option value="">Selecione</option>'+S.bancos.map(b=>`<option value="${b.id}">${b.desc}</option>`).join('');
   ['l-bo','l-bd','l-bk'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=opts;});
@@ -1460,7 +1487,7 @@ function saveLanc(){
     const bk=S.bancos.find(b=>b.id==document.getElementById('l-bk').value);
     S.lancamentos.push({id:Date.now(),tipo:S.ltipo,ht,em:document.getElementById('l-em').value,vc:document.getElementById('l-vc').value,vl:val,ct:document.getElementById('l-ct').value,cc:document.getElementById('l-cc').value,dc:document.getElementById('l-dc').value,en:document.getElementById('l-en').value,bk:bk?.desc||'',st:document.getElementById('l-st').value});
   }
-  closeM('m-lanc');renderLancs();updateDash();toast('Lançamento salvo!');
+  closeM('m-lanc');renderLancs();updateDash();toast('Lançamento salvo!');salvarTudo();
 }
 function renderLancs(){
   const tb=document.getElementById('l-tb');
@@ -1491,7 +1518,7 @@ function renderLancs(){
     <td><button class="btn bd bsm" onclick="delLanc(${l.id})">✕</button></td>
   </tr>`).join('');
 }
-function delLanc(id){S.lancamentos=S.lancamentos.filter(l=>l.id!==id);renderLancs();updateDash();}
+function delLanc(id){S.lancamentos=S.lancamentos.filter(l=>l.id!==id);renderLancs();updateDash();salvarTudo();}
 
 // ============================================================
 // CONCILIAÇÃO OFX
@@ -2084,6 +2111,100 @@ function saveContrato(){FV.cSeq++;FV.contratos.push({id:Date.now(),num:`CT-${new
 // ============================================================
 // INIT
 // ============================================================
+// ============================================================
+// SUPABASE STORAGE — BANCO DE DADOS AUTOMÁTICO
+// ============================================================
+const SB_URL = 'https://bkgqtfjwecbvukjcerpi.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrZ3F0Zmp3ZWNidnVramNlcnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MjkzOTgsImV4cCI6MjA5MDEwNTM5OH0.CluHPoXXXIRM9P3hu7PbmmXb9Ul6KMef-a2LoCBDQCk';
+const DB_BUCKET = 'dados';
+let sbClient = null;
+
+// Inicializa o cliente Supabase
+function initSupabase(){
+  try {
+    sbClient = window.supabase.createClient(SB_URL, SB_KEY);
+    console.log('Supabase conectado!');
+  } catch(e) { console.warn('Supabase não disponível:', e); }
+}
+
+// Salva dados no Storage como JSON
+async function dbSalvar(chave, dados){
+  if(!sbClient) return;
+  try {
+    const json = JSON.stringify(dados);
+    const blob = new Blob([json], {type: 'application/json'});
+    const arquivo = new File([blob], `${chave}.json`, {type: 'application/json'});
+    // Tenta deletar o arquivo antigo primeiro
+    await sbClient.storage.from(DB_BUCKET).remove([`${chave}.json`]);
+    // Salva o novo
+    const {error} = await sbClient.storage.from(DB_BUCKET).upload(`${chave}.json`, arquivo, {upsert: true});
+    if(error) throw error;
+    setSyncOK();
+  } catch(e) {
+    console.warn('Erro ao salvar:', e);
+    setSyncErro();
+  }
+}
+
+// Carrega dados do Storage
+async function dbCarregar(chave){
+  if(!sbClient) return null;
+  try {
+    const {data, error} = await sbClient.storage.from(DB_BUCKET).download(`${chave}.json`);
+    if(error) return null;
+    const texto = await data.text();
+    return JSON.parse(texto);
+  } catch(e) { return null; }
+}
+
+// Indicador de sincronização na topbar
+function setSyncOK(){
+  const el = document.getElementById('sync-status');
+  if(el) el.innerHTML = '<span style="color:#16a34a;font-size:12px">● Salvo na nuvem</span>';
+}
+function setSyncErro(){
+  const el = document.getElementById('sync-status');
+  if(el) el.innerHTML = '<span style="color:#d97706;font-size:12px">● Salvando localmente</span>';
+}
+function setSyncCarregando(){
+  const el = document.getElementById('sync-status');
+  if(el) el.innerHTML = '<span style="color:#2563eb;font-size:12px">● Sincronizando...</span>';
+}
+
+// Salva todos os dados no Supabase
+async function salvarTudo(){
+  setSyncCarregando();
+  await Promise.all([
+    dbSalvar('clientes', S.clientes),
+    dbSalvar('fornecedores', S.fornecedores),
+    dbSalvar('lancamentos', S.lancamentos),
+    dbSalvar('bancos', S.bancos),
+  ]);
+  setSyncOK();
+}
+
+// Carrega todos os dados do Supabase na inicialização
+async function carregarTudo(){
+  setSyncCarregando();
+  try {
+    const [clis, forns, lancs, banks] = await Promise.all([
+      dbCarregar('clientes'),
+      dbCarregar('fornecedores'),
+      dbCarregar('lancamentos'),
+      dbCarregar('bancos'),
+    ]);
+    if(clis && clis.length > 0){ S.clientes = clis; }
+    if(forns && forns.length > 0){ S.fornecedores = forns; }
+    if(lancs && lancs.length > 0){ S.lancamentos = lancs; }
+    if(banks && banks.length > 0){ S.bancos = banks; }
+    setSyncOK();
+    return true;
+  } catch(e){
+    setSyncErro();
+    return false;
+  }
+}
+
 window.onload=function(){
   // Carregar plano de contas
   S.plano=JSON.parse(JSON.stringify(PLANO_COMPLETO));
@@ -2319,6 +2440,19 @@ window.onload=function(){
   S.conciliacao=[];
   updateBadges();
   setTimeout(renderCharts,300);
+
+  // Conecta ao Supabase e carrega dados da nuvem
+  initSupabase();
+  carregarTudo().then(carregou => {
+    if(carregou){
+      // Atualiza a tela com dados da nuvem
+      renderClis();
+      renderForns();
+      updateBadges();
+      setTimeout(renderCharts, 300);
+      toast('Dados carregados da nuvem!');
+    }
+  });
 };
 </script>
 </body>
