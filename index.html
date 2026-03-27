@@ -1479,14 +1479,20 @@ function saveLanc(){
     const vd=S.bancos.find(b=>b.id==document.getElementById('l-bd').value);
     const val=parseFloat(document.getElementById('l-tv').value)||0;
     if(!vo||!vd||!val){toast('Preencha origem, destino e valor.',false);return;}
-    S.lancamentos.push({id:Date.now(),tipo:'transferencia',ht:document.getElementById('l-th').value||`Transf. ${vo.desc} → ${vd.desc}`,vc:document.getElementById('l-td').value,vl:val,bko:vo.desc,bkd:vd.desc,st:'baixado'});
+    const obj={id:Date.now(),tipo:'transferencia',ht:document.getElementById('l-th').value||`Transf. ${vo.desc} → ${vd.desc}`,vc:document.getElementById('l-td').value,vl:val,bko:vo.desc,bkd:vd.desc,st:'baixado'};
+    if(S._editLancId){S.lancamentos=S.lancamentos.filter(l=>l.id!==S._editLancId);S._editLancId=null;}
+    S.lancamentos.push(obj);
   } else {
     const ht=document.getElementById('l-ht').value.trim();
     const val=parseFloat(document.getElementById('l-vl').value)||0;
     if(!ht||!val){toast('Preencha histórico e valor.',false);return;}
     const bk=S.bancos.find(b=>b.id==document.getElementById('l-bk').value);
-    S.lancamentos.push({id:Date.now(),tipo:S.ltipo,ht,em:document.getElementById('l-em').value,vc:document.getElementById('l-vc').value,vl:val,ct:document.getElementById('l-ct').value,cc:document.getElementById('l-cc').value,dc:document.getElementById('l-dc').value,en:document.getElementById('l-en').value,bk:bk?.desc||'',st:document.getElementById('l-st').value});
+    const obj={id:S._editLancId||Date.now(),tipo:S.ltipo,ht,em:document.getElementById('l-em').value,vc:document.getElementById('l-vc').value,vl:val,ct:document.getElementById('l-ct').value,dc:document.getElementById('l-dc').value,en:document.getElementById('l-en').value,bk:bk?.desc||'',st:document.getElementById('l-st').value};
+    if(S._editLancId){S.lancamentos=S.lancamentos.filter(l=>l.id!==S._editLancId);}
+    S._editLancId=null;
+    S.lancamentos.push(obj);
   }
+  document.querySelector('#m-lanc .mh h2').textContent='Novo Lançamento';
   closeM('m-lanc');renderLancs();updateDash();toast('Lançamento salvo!');salvarTudo();
 }
 function renderLancs(){
@@ -1515,10 +1521,42 @@ function renderLancs(){
     <td style="font-size:12px">${l.dc||'—'}</td>
     <td style="font-weight:600;color:${l.tipo==='receber'?'var(--green)':l.tipo==='pagar'?'var(--red)':'var(--purple)'}">${l.tipo==='receber'?'+':l.tipo==='pagar'?'-':'⇄'} ${fmt(l.vl)}</td>
     <td>${sbadge(l.st)}</td>
-    <td><button class="btn bd bsm" onclick="delLanc(${l.id})">✕</button></td>
+    <td>
+      <button class="btn bs bsm" onclick="editLanc(${l.id})" title="Editar">✏</button>
+      <button class="btn bd bsm" onclick="delLanc(${l.id})" title="Excluir">✕</button>
+    </td>
   </tr>`).join('');
 }
-function delLanc(id){S.lancamentos=S.lancamentos.filter(l=>l.id!==id);renderLancs();updateDash();salvarTudo();}
+function delLanc(id){if(!confirm('Excluir este lançamento?'))return;S.lancamentos=S.lancamentos.filter(l=>l.id!==id);renderLancs();updateDash();salvarTudo();}
+function editLanc(id){
+  const l=S.lancamentos.find(x=>x.id===id);if(!l)return;
+  S._editLancId=id;
+  // Abre o modal preenchido
+  abrirLanc();
+  setTimeout(()=>{
+    // Define tipo
+    const tipo=l.tipo||'receber';
+    S.ltipo=tipo;
+    document.querySelectorAll('#sg-lt .sgb').forEach(b=>b.classList.remove('active'));
+    const idx=tipo==='receber'?0:tipo==='pagar'?1:2;
+    document.querySelectorAll('#sg-lt .sgb')[idx]?.classList.add('active');
+    document.getElementById('fm-tr').style.display=tipo==='transferencia'?'':'none';
+    document.getElementById('fm-lc').style.display=tipo==='transferencia'?'none':'';
+    // Preenche campos
+    document.getElementById('l-em').value=l.em||'';
+    document.getElementById('l-vc').value=l.vc||'';
+    document.getElementById('l-vl').value=l.vl||'';
+    document.getElementById('l-ht').value=l.ht||'';
+    document.getElementById('l-dc').value=l.dc||'';
+    document.getElementById('l-en').value=l.en||'';
+    document.getElementById('l-st').value=l.st||'aberto';
+    // Conta contábil
+    const ctSel=document.getElementById('l-ct');
+    if(ctSel&&l.ct){ctSel.value=l.ct;}
+    // Atualiza título do modal
+    document.querySelector('#m-lanc .mh h2').textContent='Editar Lançamento';
+  },100);
+}
 
 // ============================================================
 // CONCILIAÇÃO OFX
@@ -1567,8 +1605,26 @@ function renderConc(){
   tb.innerHTML=rows;
 }
 function criarOfx(id,val,date,memo){
-  S.lancamentos.push({id:Date.now(),tipo:val>0?'receber':'pagar',ht:memo||'Importado OFX',vc:date,vl:Math.abs(val),ct:'',bk:'',st:'baixado'});
-  renderConc();updateDash();toast('Lançamento criado!');
+  // Abre o modal de lançamento com dados pré-preenchidos do extrato
+  abrirLanc();
+  setTimeout(()=>{
+    // Define tipo automaticamente baseado no valor
+    const tipo = val >= 0 ? 'receber' : 'pagar';
+    S.ltipo = tipo;
+    document.querySelectorAll('#sg-lt .sgb').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('#sg-lt .sgb')[tipo==='receber'?0:1]?.classList.add('active');
+    document.getElementById('fm-tr').style.display='none';
+    document.getElementById('fm-lc').style.display='';
+    // Preenche os campos com dados do extrato
+    document.getElementById('l-vc').value=date||'';
+    document.getElementById('l-em').value=date||'';
+    document.getElementById('l-vl').value=Math.abs(val)||'';
+    document.getElementById('l-ht').value=memo||'Importado OFX';
+    document.getElementById('l-st').value='baixado';
+    // Foca na conta contábil para o usuário selecionar
+    setTimeout(()=>{ document.getElementById('l-ct')?.focus(); }, 200);
+    toast('Selecione a conta contábil e salve o lançamento.', true);
+  },150);
 }
 
 // ============================================================
